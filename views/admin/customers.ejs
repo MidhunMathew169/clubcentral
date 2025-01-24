@@ -1,0 +1,181 @@
+<style>
+    .hero-section {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
+        background-color: #f5f5f5;
+    }
+
+    .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background-color: white;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .title {
+        font-size: 24px;
+        font-weight: bold;
+    }
+
+    .search-filter {
+        display: flex;
+        gap: 10px;
+    }
+
+    .filter-btn {
+        padding: 8px 16px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        background-color: white;
+        cursor: pointer;
+    }
+
+    .search-input {
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 250px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th {
+        background-color: #1a1a1a;
+        color: white;
+        text-align: left;
+        padding: 12px;
+    }
+
+    td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+    .action-btn {
+        padding: 6px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        color: white;
+    }
+
+    .block-btn {
+        background-color: #dc3545;
+    }
+
+    .unblock-btn {
+        background-color: #28a745;
+    }
+    .pagination {
+        margin-top: 15px;
+    }
+</style>
+
+<div class="flex h-screen">
+    <!--side bar section-->
+    <%- include('../partials/admin/side bar') %>
+    <!--header section-->
+    <div class="flex-1">
+        <%- include('../partials/admin/header') %>
+        <div class="hero-section">
+            <div class="container">
+                <div class="header">
+                    <h1 class="title">USERS</h1>
+                    <div class="search-filter">
+                        <div class="filter-btn">
+                            Filter By
+                            <select>
+                                <option>Blocked</option>
+                                <option>Unblocked</option>
+                            </select>
+                        </div>
+                        <input type="search" class="search-input" placeholder="Search user">
+                    </div>
+                </div>
+        
+                <table>
+                    <thead>
+                        <tr>
+                            <th>S.No</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                            <th>Update</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let sl = limit * (currentPage - 1)  %>
+                        <% user.forEach((user) => { %>
+                        <tr>
+                            <td><%= sl = sl+1 %></td>
+                            <td><%= user.firstname %> <%= user.lastname %></td>
+                            <td><%= user.email %></td>
+                            <td>
+                                <%if (!user.isBlocked) { %>
+                                  <span>Unblocked</span>  
+                                <% } else { %>
+                                  <span>Blocked</span>  
+                                <% } %>
+                            </td>
+                            <td>
+                                <% if (!user.isBlocked) { %>
+                                    <button class="btn bg-red-400 px-2 rounded-md" id="block-btn" onclick="blockUser('<%= user.id %>')">Block</button>
+                                    <% } else { %>
+                                        <button class="btn bg-green-400 px-2 rounded-md" id="unblock-btn" onclick="unBlockUser('<%= user.id %>')">Unblock</button>
+                                <% } %>
+                            </td>
+                        </tr>
+                   <%  }) %>
+                    </tbody>
+                </table>
+            </div>
+            <div class="d-flex justify-content-center">
+                <ul class="pagination">
+                <% for(let i =1; i <= totalPages; i++) {%>
+                    <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>&limit=5"><%= i %></a>
+                    </li>
+                    <% } %>
+                </ul>
+        </div>
+
+    </div>
+</div>
+
+
+<script>
+    async function blockUser(userId) {
+        try {
+            const response = await axios.post(`/admin/block-user/${ userId }`);
+            if(response.status === 200){
+                window.location.reload();
+            }
+        } catch (error) {
+            console.log('Error blocking user:',error);
+        }
+    }
+    async function unBlockUser(userId) {
+        try {
+            const response = await axios.post(`/admin/unblock-user/${userId}`);
+            if(response.status === 200){
+                window.location.reload();
+            }
+        } catch (error) {
+            console.log('Error unblocking user:',error);
+        }
+    }
+</script>

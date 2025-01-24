@@ -1,0 +1,227 @@
+<div class="signup-container">
+    <div class="image-section">
+        <h4>Be a member with ClubCentral</h4>
+        <img src="/images/app_logo.jpeg" alt="Club Central Logo">
+    </div>
+    <div class="form-section">
+        <h3>Create Account</h3>
+        <form id="signform" action="/signup" method="POST">
+            <div class="form-group">
+                <label for="firstname">Firstname</label>
+                <input type="text" id="first-name" class="form-control" name="firstname" placeholder="First Name">
+                <div id="error1" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="lastname">Lastname</label>
+                <input type="text" id="last-name" class="form-control" name="lastname" placeholder="Last Name">
+                <div id="error1" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" class="form-control" name="email" placeholder="Email Address">
+                <div id="error2" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="Phone">Phone</label>
+                <input type="text" id="phone" class="form-control" name="Phone" placeholder="Phone">
+                <div id="error3" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" class="form-control" name="password" placeholder="Password">
+                <div id="error4" class="error-message"></div>
+            </div>
+            <div class="form-group">
+                <label for="password">Confirm Password</label>
+                <input type="password" id="confirm-password" class="form-control" name="cPassword" placeholder="Confirm Password">
+                <div id="error5" class="error-message"></div>
+            </div>
+            <%if(locals.message && message.length > 0){%>
+                <div class="alert alert-danger text-center" role="alert">
+                    <%=message%>
+                </div>
+                <%}%>
+            <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+            <a href="/auth/google" class="btn btn-google btn-block mt-3">
+                CONTINUE WITH 
+                <img src="https://pngimg.com/uploads/google/google_PNG102344.png" alt="Google Logo">
+            </a>
+        </form>
+    </div>
+</div>
+<style>
+    body {
+        background-color: #f8f9fa;
+        height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    .signup-container {
+        width: 100%;
+        max-width: 900px;
+        display: flex;
+        align-items: center;
+        background-color: white;
+        box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        overflow: hidden;
+    }
+    .image-section {
+        flex: 1;
+        background-color: black;
+        color: white;
+        text-align: center;
+        padding: 20px;
+    }
+    .image-section img {
+        width: 70%;
+        border-radius: 15px;
+    }
+    .form-section {
+        flex: 1.2;
+        padding: 30px;
+    }
+    .form-section h3 {
+        font-weight: bold;
+        margin-bottom: 20px;
+    }
+    .btn-google {
+        background-color: #f8f9fa;
+        color: black;
+        border: 1px solid #ddd;
+        font-weight: bold;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .btn-google img {
+        width: 75px;
+        margin-right: 10px;
+    }
+    .btn-google:hover {
+        background-color: #e6e6e6;
+    }
+    .error-message {
+        color: red;
+        font-size: 0.75rem;
+        display: none;
+    }
+</style>
+
+<script>
+//document.addEventListener("DOMContentLoaded", function(){
+    const fnameid = document.getElementById('first-name');
+    const lnameid = document.getElementById('last-name');
+    const emailid = document.getElementById('email');
+    const phoneid = document.getElementById('phone');
+    const passwordid = document.getElementById('password');
+    const confirmpasswordid = document.getElementById('confirm-password');
+    const error1 = document.getElementById('error1');
+    const error2 = document.getElementById('error2');
+    const error3 = document.getElementById('error3');
+    const error4 = document.getElementById('error4');
+    const error5 = document.getElementById('error5');
+    const signform = document.getElementById('signform');
+
+    function nameValidateChecking(e){
+        const nameVal = fnameid.value;
+        const namePattern = /^[a-zA-Z]{3,}$/;
+
+        if(nameVal.trim() === ""){
+            error1.style.display = "block";
+            error1.innerHTML = "Name is required";
+    }
+    else if(!namePattern.test(nameVal)){
+        error1.style.display = "block";
+        error1.innerHTML = "Name can only contain alphabets and minimum 3 characters";
+    }
+    else{
+        error1.style.display = "none";
+        error1.innerHTML = "";
+    } 
+    }
+
+    function emailValidateChecking(e){
+        const emailVal = emailid.value;
+        const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+
+        if(!emailPattern.test(emailVal)){
+            error2.style.display = "block";
+            error2.innerHTML = "invalid format";
+        }
+        else{
+            error2.style.display = "none";
+            error2.innerHTML = "";
+        }
+    }
+
+    function phoneValidateChecking(e){
+        const phoneVal = phoneid.value;
+        if(phoneVal.trim() === ""){
+            error3.style.display = "block";
+            error3.innerHTML = "Phone is required";
+        }
+        else if(phoneVal.length < 10 || phoneVal.length > 10){
+            error3.style.display = "block";
+            error3.innerHTML = "Phone number must be 10 digits";
+        }
+        else{
+            error3.style.display = "none";
+            error3.innerHTML = "";
+        }
+    }
+
+    function passwordValidateChecking(e){
+        const passwordVal = passwordid.value;
+        const confirmpasswordVal = confirmpasswordid.value;
+        const alpha = /[a-zA-Z]/;
+        const number = /[0-9]/;
+        if(passwordVal.trim() === ""){
+            error4.style.display = "block";
+            error4.innerHTML = "Password is required";
+        }
+        else if(passwordVal.length < 8){
+            error4.style.display = "block";
+            error4.innerHTML = "Password must be 8 characters long";
+        }
+        else if(!alpha.test(passwordVal) || !number.test(passwordVal)){
+            error4.style.display = "block";
+            error4.innerHTML = "Password must contain at least one uppercase, one lowercase, one number and one special character";
+        }
+        else{
+            error4.style.display = "none";
+            error4.innerHTML = "";
+        }
+
+        if(confirmpasswordVal.trim() === ""){
+            error5.style.display = "block";
+            error5.innerHTML = "Confirm Password is required";
+        }
+        else if(confirmpasswordVal !== passwordVal){
+            error5.style.display = "block";
+            error5.innerHTML = "Password does not match";
+        }
+        else{
+            error5.style.display = "none";
+            error5.innerHTML = "";
+        }
+    }
+
+    document.addEventListener("DOMContentLoaded",function(){
+        signform.addEventListener("submit",function(e){
+            nameValidateChecking();
+            emailValidateChecking();
+            phoneValidateChecking();
+            passwordValidateChecking();
+
+            if(!fnameid || !lnameid || !emailid || !phoneid || !passwordid || !confirmpasswordid || !error1 || !error2 || !error3 || !error4 || !error5 || !signform){
+                console.error("element not found");
+            }
+            if(error1.innerHTML || error2.innerHTML || error3.innerHTML || error4.innerHTML || error5.innerHTML){
+                e.preventDefault();
+            }
+        })
+    })
+
+</script>

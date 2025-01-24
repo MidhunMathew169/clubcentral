@@ -1,0 +1,458 @@
+<title>Category Management</title>
+
+<style>
+    .main-content {
+        padding: 40px;
+        margin: 0 auto; /* Center the content */
+        width: 90%; /* Enlarged width */
+        max-width: 1400px; /* Maximum width to maintain readability */
+    }
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+    .search-section {
+        margin-bottom: 20px;
+    }
+    .search-input {
+        max-width: 300px;
+        border-radius: 5px;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+    }
+    .btn-add {
+        background-color: #000;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+    }
+    .table {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+    }
+    .table th, .table td {
+        padding: 15px 25px; /* Increased padding */
+        text-align: left;
+        border-bottom: 1px solid #ddd;
+    }
+    .table th {
+        background-color: #000;
+        color: white;
+        font-weight: 500;
+    }
+    .table tbody tr:hover {
+        background-color: #f5f5f5;
+    }
+    .table-responsive {
+        overflow-x: auto;
+        background: white;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        margin-top: 20px;
+    }
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 60px;
+        height: 30px;
+    }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 22px;
+        width: 22px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider {
+        background-color: #4CAF50;
+    }
+    input:checked + .slider:before {
+        transform: translateX(30px);
+    }
+    .btn-offer {
+        background-color: #000;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 5px;
+    }
+    .btn-edit {
+        padding: 6px 12px;
+        border-radius: 5px;
+    }
+    .flex-h-screen {
+        display: flex;
+        min-height: 100vh;
+    }
+    .flex-1 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+        padding: 0px 0; /* Add vertical padding */
+    }
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 1000;
+    }
+    .modal.show {
+        display: flex !important;
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-dialog {
+        background: white;
+        border-radius: 8px;
+        width: 90%;
+        max-width: 500px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    .modal-content {
+        position: relative;
+    }
+    .modal-header {
+        padding: 1.5rem;
+        border-bottom: 1px solid #e5e5e5;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+    .modal-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #333;
+    }
+    .btn-close {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #666;
+        cursor: pointer;
+        padding: 0.5rem;
+    }
+    .btn-close:hover {
+        color: #333;
+    }
+    .modal-body {
+        padding: 1.5rem;
+    }
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: #333;
+    }
+    .form-control {
+        width: 100%;
+        padding: 0.75rem;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin-bottom: 1rem;
+        font-size: 1rem;
+    }
+    .form-control:focus {
+        border-color: #000;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(0,0,0,0.1);
+    }
+    .btn-success {
+        background-color: #000;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border: none;
+        border-radius: 4px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: background-color 0.2s;
+    }
+    .btn-success:hover {
+        background-color: #333;
+    }
+    .error-message {
+        color: #dc3545;
+        font-size: 0.875rem;
+        margin-top: -0.5rem;
+        margin-bottom: 1rem;
+        display: none;
+    }
+</style>
+
+<div class="flex-h-screen">
+    <!--side bar section-->
+    <%- include('../partials/admin/side bar') %>
+    <div class="flex-1">
+        <!--header section-->
+        <%- include('../partials/admin/header') %>
+        <div class="main-content">
+            <div class="header-section">
+                <h2>CATEGORY</h2>
+                <button class="btn-add" onclick="openModal()">
+                     Add Category
+                </button>
+            </div>
+            <!--add category Modal -->
+            <div class="modal fade" id="addCategoryModal" tabindex="-1" aria-labelledby="addCategoryModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="addCategoryModalLabel">Add New Category</h5>
+                            <button type="button" class="btn-close" onclick="closeModal()">×</button>
+                        </div>
+                        <div class="text-center text-gray-900" id="response-message"></div>
+                        <div class="modal-body">
+                            <form action="/admin/add-category" method="POST" onsubmit="return handleFormSubmit(event)">
+                                <div class="mb-3">
+                                    <label for="categoryName" class="form-label">Name</label>
+                                    <input type="text" class="form-control" id="categoryId" name="categoryName" placeholder="Enter category name" required>
+                                    <div id="error1" class="error-message"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="descriptionId" class="form-label">Description</label>
+                                    <input type="text" class="form-control" id="descriptionId" name="description" placeholder="Enter category description" required>
+                                    <div id="error2" class="error-message"></div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="offer" class="form-label">Offer</label>
+                                    <input type="text" class="form-control" id="offerId" name="offer" placeholder="Enter offer" required>
+                                    <div id="error3" class="error-message"></div>
+                                </div>
+                                <div class="text-right">
+                                    <button type="submit" class="btn btn-success">Add Category</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!--edit category modal-->
+            <div class="modal fade" id="editCategoryModal" tabindex="-1" aria-labelledby="editCategoryModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="editCategoryModalLabel">Edit Category</h5>
+                            <button type="button" class="btn-close" onclick="closeEditModal()">×</button>
+                        </div>
+                     <div class="text-center text-gray-900" id="response-message"></div>
+                     <div class="modal-body">
+                        <form action="/admin/edit-category" method="" onsubmit="">
+                            <div class="mb-3">
+                                <label for="categoryName" class="form-label">Name</label>
+                                <input type="text" class="form-control" id="editCategoryId" name="categoryName" placeholder="Enter category name" required>
+                                <div id="error1" class="error-message"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <input type="text" class="form-control" id="editDescriptionId" name="Description" placeholder="Enter category description" required>
+                                <div id="error2" class="error-message"></div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="offer" class="form-label">Offer</label>
+                                <input type="text" class="form-control" id="editOfferId" name="offer" placeholder="Enter offer" required>
+                                <div id="error3" class="error-message"></div>
+                            </div>
+                            <div class="text-right">
+                                <button type="submit" class="btn btn-success">Update</button>
+                            </div>
+                        </form><!--form submission-->
+                     </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-section">
+                <input type="text" class="search-input" placeholder="Search category...">
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>SNO</th>
+                            <th>Category Name</th>
+                            <th>Status</th>
+                            <th>List/Unlist</th>
+                            <th>Action</th>
+                            <th>Offer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% categories.forEach((category, index) => { %>
+                            <tr>
+                                <td><%= index + 1 %></td>
+                                <td><%= category.name %></td>
+                                <td><%= category.isListed ? 'Listed':'Unlisted' %></td>
+                                <td>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" <%= category.isListed ? 'checked' : '' %>>
+                                        <span class="slider"></span>
+                                    </label>
+                                </td>
+                                <td>
+                                    <button class="btn btn-dark btn-edit" onclick="OpenEditModal('<%= category._id %>','<%= category.name %>','<%= category.description %>','<%= category.categoryOffer %>')">
+                                        Edit category <i class="fas fa-plus"></i>
+                                    </button>
+                                </td>
+                                <td><%= category.categoryOffer === 0 ? 'N/A': category.categoryOffer %></td>
+                            </tr>
+                        <% }); %>
+                        
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    </div>
+
+<script>
+    //open modal
+    function openModal() {
+        const modal = document.getElementById('addCategoryModal');
+        modal.classList.add('show');
+    }
+
+    //close modal
+    function closeModal() {
+        //clear the form
+        document.getElementById('categoryId').value = "";
+        document.getElementById('descriptionId').value = "";
+        //clear error messages
+        document.getElementById('response-message').textContent = "";
+
+        const modal = document.getElementById('addCategoryModal');
+        modal.classList.remove('show');
+        
+    }
+
+    //open edit modal
+    function OpenEditModal(id,name,description,offer){
+        console.log('working');
+        console.log(id,name,description);
+        const modal = document.getElementById('editCategoryModal');
+        document.getElementById('editCategoryId').value = name;
+        document.getElementById('editDescriptionId').value = description;
+        document.getElementById('editOfferId').value = offer;
+        console.log(document.getElementById('editCategoryId').value);
+        console.log(document.getElementById('editDescriptionId').value);
+        modal.classList.add('show');
+        //modal.style.display = "block";
+        editFormSubmit(id,name,description,offer);
+    }
+
+    //close edit modal
+    function closeEditModal(){
+        const modal = document.getElementById('editCategoryModal');
+        modal.classList.remove('show');
+    }
+
+    async function handleFormSubmit(event){
+        event.preventDefault();
+        if(!validateForm()){
+            return;
+        }
+        const responsemessage = document.getElementById('response-message');
+        const name = document.getElementsByName('categoryName')[0].value;
+        const description = document.getElementById('descriptionId').value;
+        const offer = document.getElementById('offerId').value;
+        try {
+        const response = await axios.post('/admin/add-category', {name,description,offer});
+        alert(response.data.message);
+        if(response.data.success){
+            window.location.reload();
+        }
+            console.log(response);
+            
+        } catch (error) {
+           console.log(error);
+           console.log(error.response.data.error);
+           responsemessage.textContent = error.response.data.error;
+              
+        }
+    }
+
+    async function editFormSubmit(id,name,description,offer){
+        event.preventDefault();
+        if(!validateForm()){
+            return;
+        }
+        try {
+            const response = await axios.put(`/admin/edit-category/${id}`, {name,description,offer});
+            console.log(id)
+            console.log(response.success);
+            if(response.success){
+                window.location.reload();
+            }
+        } catch (error) {
+            
+        }
+    }
+    
+    function validateForm(){
+        clearErrorMessages();
+        const name = document.getElementsByName('categoryName')[0].value.trim();
+        const description = document.getElementById('descriptionId').value.trim();
+        const offer = document.getElementById('offerId').value.trim();
+        isValid = true;
+
+        if(name === ''){
+            displayErrorMessage("error1","Name is required")
+            isValid = false;
+        }
+        else if(!/^[a-zA-Z]+$/.test(name)){
+            displayErrorMessage("error1","Name can only contain alphabets")
+            isValid = false;
+        }
+        if(description === ''){
+            displayErrorMessage("error2","Description is required")
+            isValid = false;
+        }
+        if(offer === ''){
+            displayErrorMessage("error3","Offer is required")
+            isValid = false;
+        }
+        return isValid;
+    }
+    function displayErrorMessage(elementId,message){
+        var errorElement = document.getElementById(elementId);
+        errorElement.innerText = message;
+        errorElement.style.display = "block";
+    }
+    function clearErrorMessages(){
+        const errorElements = document.getElementsByClassName('error-message');
+        Array.from(errorElements).forEach(element => {
+            element.innerText = "";
+            element.style.display = "none";
+        })
+    }
+</script>
