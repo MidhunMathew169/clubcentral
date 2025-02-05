@@ -206,6 +206,14 @@
         margin-bottom: 1rem;
         display: none;
     }
+    .pagination a {
+        margin: 0 5px;
+        text-decoration: none;
+    }
+    .pagination .active{
+        font-weight: bold;
+        text-decoration: underline;
+    }
 </style>
 
 <div class="flex-h-screen">
@@ -234,17 +242,17 @@
                             <form action="/admin/add-category" method="POST" onsubmit="return handleFormSubmit(event)">
                                 <div class="mb-3">
                                     <label for="categoryName" class="form-label">Name</label>
-                                    <input type="text" class="form-control" id="categoryId" name="categoryName" placeholder="Enter category name" required>
+                                    <input type="text" class="form-control" id="addCategoryId" name="categoryName" placeholder="Enter category name">
                                     <div id="error1" class="error-message"></div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="descriptionId" class="form-label">Description</label>
-                                    <input type="text" class="form-control" id="descriptionId" name="description" placeholder="Enter category description" required>
+                                    <input type="text" class="form-control" id="descriptionId" name="description" placeholder="Enter category description">
                                     <div id="error2" class="error-message"></div>
                                 </div>
                                 <div class="mb-3">
                                     <label for="offer" class="form-label">Offer</label>
-                                    <input type="text" class="form-control" id="offerId" name="offer" placeholder="Enter offer" required>
+                                    <input type="text" class="form-control" id="offerId" name="offer" placeholder="Enter offer">
                                     <div id="error3" class="error-message"></div>
                                 </div>
                                 <div class="text-right">
@@ -266,7 +274,7 @@
                         </div>
                      <div class="text-center text-gray-900" id="response-message"></div>
                      <div class="modal-body">
-                        <form action="/admin/edit-category" method="" onsubmit="">
+                        <form onsubmit="editFormSubmit(event,'<%= %>')">
                             <div class="mb-3">
                                 <label for="categoryName" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="editCategoryId" name="categoryName" placeholder="Enter category name" required>
@@ -315,7 +323,7 @@
                                 <td><%= category.isListed ? 'Listed':'Unlisted' %></td>
                                 <td>
                                     <label class="toggle-switch">
-                                        <input type="checkbox" <%= category.isListed ? 'checked' : '' %>>
+                                        <input type="checkbox" class="toggle-category" data-category-id="<%= category._id %>" <%= category.isListed ? 'checked' : '' %>>
                                         <span class="slider"></span>
                                     </label>
                                 </td>
@@ -332,10 +340,49 @@
                 </table>
             </div>
         </div>
+        <div class="pagination">
+            <% if (hasPrevPage) { %>
+                <a href="/admin/categories?page=<%= prevPage %>&limit=<%= limit %>">Previous</a>
+                <% } %>
+                <% for (let i = 1; i <= totalPages; i++) { %>
+                    <a href="/admin/categories?page=<%= i %>&limit=<%= limit %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+                    <% } %>
+            <% if (hasNextPage) { %>
+                <a href="/admin/categories?page=<%= nextPage %>&limit=<%= limit %>">Next</a>
+                <% } %>
+        </div>
     </div>
     </div>
 
 <script>
+
+    //list/unlist
+     document.addEventListener('DOMContentLoaded', function () {
+        const toggleSwitches = document.querySelectorAll('.toggle-category');
+
+        toggleSwitches.forEach(toggle => {
+            toggle.addEventListener('change', async function () {
+                const categoryId = this.getAttribute('data-category-id');
+                const isListed = this.checked;
+
+                console.log("sending request:",{ categoryId,isListed });
+                try {
+                    const response = await axios.patch(`/admin/toggle-category/${categoryId}`, { isListed });
+
+                    if (response.status !== 200) {
+                        throw new Error('Failed to update category status');
+                    }
+
+                    console.log("response recieved",response.data);
+                } catch (error) {
+                    console.error(error);
+                    alert("Error updating category status");
+                    this.checked = !isListed; // Revert checkbox state on failure
+                }
+            });
+        });
+    });
+
     //open modal
     function openModal() {
         const modal = document.getElementById('addCategoryModal');
@@ -345,7 +392,7 @@
     //close modal
     function closeModal() {
         //clear the form
-        document.getElementById('categoryId').value = "";
+        document.getElementById('addCategoryId').value = "";
         document.getElementById('descriptionId').value = "";
         //clear error messages
         document.getElementById('response-message').textContent = "";
@@ -363,11 +410,13 @@
         document.getElementById('editCategoryId').value = name;
         document.getElementById('editDescriptionId').value = description;
         document.getElementById('editOfferId').value = offer;
-        console.log(document.getElementById('editCategoryId').value);
-        console.log(document.getElementById('editDescriptionId').value);
+        // console.log(document.getElementById('editCategoryId').value);
+        // console.log(document.getElementById('editDescriptionId').value);
+        
+        //editFormSubmit(id,name,description,offer);
+        const form = document.querySelector('#editCategoryModal form');
+        form.onsubmit = (event)=> editFormSubmit(event,id);
         modal.classList.add('show');
-        //modal.style.display = "block";
-        editFormSubmit(id,name,description,offer);
     }
 
     //close edit modal
@@ -379,7 +428,7 @@
     async function handleFormSubmit(event){
         event.preventDefault();
         if(!validateForm()){
-            return;
+          return;
         }
         const responsemessage = document.getElementById('response-message');
         const name = document.getElementsByName('categoryName')[0].value;
@@ -401,35 +450,48 @@
         }
     }
 
-    async function editFormSubmit(id,name,description,offer){
+    async function editFormSubmit(event,id){
         event.preventDefault();
+
+        console.log('editFormsubmit triggered');
+        const name = document.getElementById('editCategoryId').value;
+        const description = document.getElementById('editDescriptionId').value;
+        const offer = document.getElementById('editOfferId').value;
         if(!validateForm()){
-            return;
+            console.log('error in validation');
+            //return;//there is a error in validation
         }
         try {
-            const response = await axios.put(`/admin/edit-category/${id}`, {name,description,offer});
-            console.log(id)
-            console.log(response.success);
-            if(response.success){
+            console.log('try block');
+            const response = await axios.patch(`/admin/edit-category/${id}`, {name,description,offer});
+        
+            console.log(response.data);
+            if(response.data.success){
                 window.location.reload();
             }
+            else{
+                console.error(response.data.error);
+            }
         } catch (error) {
-            
+            console.error(error);
         }
     }
     
     function validateForm(){
+        console.log('validation running');
         clearErrorMessages();
         const name = document.getElementsByName('categoryName')[0].value.trim();
         const description = document.getElementById('descriptionId').value.trim();
         const offer = document.getElementById('offerId').value.trim();
+        console.log(name);
+        
         isValid = true;
 
         if(name === ''){
             displayErrorMessage("error1","Name is required")
             isValid = false;
         }
-        else if(!/^[a-zA-Z]+$/.test(name)){
+        else if(!/^[a-zA-Z\s]+$/.test(name)){
             displayErrorMessage("error1","Name can only contain alphabets")
             isValid = false;
         }

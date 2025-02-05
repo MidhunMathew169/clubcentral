@@ -11,8 +11,6 @@ const expressLayouts=require('express-ejs-layouts');
 const nocache=require('nocache')
 db();
 
-app.use(express.json());
-app.use(express.urlencoded({extended:true}));
 app.use(session({
     secret : process.env.SESSION_SECRET,
     resave : false,
@@ -22,8 +20,10 @@ app.use(session({
         httpOnly : true,
         maxAge : 1000*60*60*24
     }
-}))
+}));
 
+app.use(express.json());
+app.use(express.urlencoded({extended:true}));
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -37,7 +37,7 @@ app.use(nocache())
  app.use("/",userRouter);
  app.use("/admin",adminRouter);
 
-const PORT = 3015 || process.env.PORT;
+const PORT = 3200 || process.env.PORT;
 app.listen(PORT, ()=>{
     console.log('server running');
 })

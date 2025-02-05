@@ -1,11 +1,69 @@
 
     <!-- Header Section End -->
     <%-include("../partials/user/header")%>
+    <link rel="stylesheet" href="">
+    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
+    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
+
+    <style>
+        .hero-section {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: url('https://cdn.media.amplience.net/i/ArsenalDirect/Home_Kit_2024_category_banner_1512x552?$webp-image__100-width--desktop$') center center/cover no-repeat;
+      overflow: hidden;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to right, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.2) 100%);
+      z-index: 1;
+    }
+
+    .hero-content {
+      position: absolute;
+      z-index: 2;
+      top: 50%;
+      left: 8%;
+      transform: translateY(-50%);
+      width: 90%;
+      max-width: 650px;
+      color: white;
+    }
+
+    .hero-title {
+      font-size: clamp(3.5rem, 10vw, 6.5rem);
+      font-weight: 900;
+      line-height: 0.9;
+      margin-bottom: 1.5rem;
+      text-transform: uppercase;
+      letter-spacing: -2px;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.8s ease-out forwards;
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.1rem, 3vw, 1.4rem);
+      margin-bottom: 2.5rem;
+      opacity: 0;
+      transform: translateY(30px);
+      animation: fadeInUp 0.8s ease-out 0.3s forwards;
+      max-width: 500px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+    </style>
 
     <!-- Hero Section Begin -->
-    <section class="hero">
+    <!--<section class="hero">
+        <p></p>
         <div class="hero__slider owl-carousel">
-            <div class="hero__items set-bg" data-setbg="img/banner/banner-1.jpg">
+            <div class="hero__items set-bg" data-setbg="/public/img/hero/hero-1.jpg">
                 <div class="container">
                     <div class="row">
                         <div class="col-xl-5 col-lg-7 col-md-8">
@@ -48,11 +106,19 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section>-->
+    <div class="hero-section">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+          <h1 class="hero-title text-white">Break Your<br>Limits</h1>
+          <p class="hero-subtitle text-warning" >Push boundaries with our latest collection of performance footwear. Engineered for those who demand greatness.</p>
+          <a href="/shop" class="hero-cta">Shop Collection</a>
+        </div>
+      </div>
     <!-- Hero Section End -->
 
     <!-- Banner Section Begin -->
-    <section class="banner spad">
+    <!--<section class="banner spad">
         <div class="container">
             <div class="row">
                 <div class="col-lg-7 offset-lg-4">
@@ -90,9 +156,63 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section>-->
     <!-- Banner Section End -->
-
+     <section class="club spad">
+        <div class="container">
+            <div class="d-flex justify-content-between align-items-center">
+              <h2 class="text-xl font-bold mb-4">Shop By Clubs</h2>
+            </div>
+    
+            <!-- Flex container for logos -->
+            <div class="d-flex justify-content-between align-items-center">
+              <!-- Adidas -->
+              <div class="bg-light rounded-circle p-3">
+                <img
+                  alt="Adidas logo"
+                  class="w- h-auto"
+                  src="https://brandlogos.net/wp-content/uploads/2014/11/fc-bayern-munich-logo-300x300.png"
+                  width="64"
+                  height="64"
+                />
+              </div>
+    
+              <!-- Nike -->
+              <div class="bg-light rounded-circle p-3">
+                <img
+                  alt="Nike logo"
+                  class="w-h-auto"
+                  src="https://brandlogos.net/wp-content/uploads/2014/12/paris-saint-germain-logo-300x300.png"
+                  width="64"
+                  height="64"
+                />
+              </div>
+    
+              <!-- Jordan -->
+              <div class="bg-light rounded-circle p-3">
+                <img
+                  alt="Jordan logo"
+                  class="w h-auto"
+                  src="https://brandlogos.net/wp-content/uploads/2014/10/real_madrid_cf-brandlogo.net_-300x300.png"
+                  width="64"
+                  height="64"
+                />
+              </div>
+    
+              <!-- New Balance -->
+              <div class="bg-light rounded-circle p-3">
+                <img
+                  alt="New Balance logo"
+                  class="w h-auto"
+                  src="https://brandlogos.net/wp-content/uploads/2012/12/manchester-united-logo-vector.png"
+                  width="79"
+                  height="66"
+                />
+              </div>
+            </div>
+          </div>
+    
+     </section>
     <!-- Product Section Begin -->
     <section class="product spad">
         <div class="container">
@@ -435,7 +555,7 @@
     <!-- Categories Section End -->
 
     <!-- Instagram Section Begin -->
-    <section class="instagram spad">
+    <!--<section class="instagram spad">
         <div class="container">
             <div class="row">
                 <div class="col-lg-8">
@@ -458,7 +578,7 @@
                 </div>
             </div>
         </div>
-    </section>
+    </section>-->
     <!-- Instagram Section End -->
 
     <!-- Latest Blog Section Begin -->

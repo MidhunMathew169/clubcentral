@@ -1,4 +1,6 @@
 const User = require("../../models/userSchema");
+const Category = require("../../models/categorySchema");
+const Product = require("../../models/productSchema");
 const env = require("dotenv").config();
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
@@ -80,17 +82,19 @@ const securePassword = async(password)=>{
 }
 
 const resendOtp = async(req,res)=>{
+    console.log('resend otp is triggered');
     try {
         const {email} = req.session.userData;
-        console.log(email,'email');
+        console.log('email',email);
         if(!email){
             return res.status(400).json({success:false,message:"email not found in session"});
         }
 
         const otp = generateOtp();
         req.session.userOtp = otp;
+        console.log('resend otp:',otp);
 
-        const emailSent = await sendEmail(userData.email,otp);
+        const emailSent = await sendEmail(email,otp);
         if(emailSent){
             req.session.userOtp = otp;
             console.log("OTP sent:",otp);
@@ -109,8 +113,8 @@ const verifyOtp = async(req,res)=>{
     
     try {
         const {otp} = req.body;
-        console.log(otp,'looooooooooooooooooooo');
-        console.log(req.session.userData,'yyyy');
+        console.log('otp from body',otp);
+        //console.log(req.session.userData);
         if(req.session.userOtp.toString() === otp.toString()){
             const user = req.session.userData;
             const passwordHash = await securePassword(user.password);
@@ -125,8 +129,8 @@ const verifyOtp = async(req,res)=>{
 
             await saveUserData.save();
             req.session.user = saveUserData._id;
-            //res.json({success:true,redirectUrl:"/",message:"user created successfully"});
-            res.render("user/home");
+            res.json({success:true,redirectUrl:"/",message:"user created successfully"});
+            //res.render("user/home");
         }
         else{
             res.status(400).json({success:false,message:"otp does not match"});
@@ -161,19 +165,31 @@ const pageNotFound = async(req,res)=>{
 const loadHomepage = async(req,res)=>{
     try {
         const user = req.session.user;
+        //console.log('session:',req.session);
         console.log('Session User:', req.session.user);
+        console.log('user in teioweof:',user);
+        
+        const categories = await Category.find({isListed:true});
+        let productData = await Product.find({
+            isListed:true,
+            category:{$in:categories.map(category=>category._id)},
+            quantity:{$gt:0}
+        })
+
+        productData.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
+        productData = productData.slice(0,4);
 
         if(user){
-            const userData = await User.findOne({_id:user._id});
-            res.render("user/home",{user:userData});
+            const userData = await User.findOne({user:user._id});
             console.log('User Data:', userData);
+            //const name = userData.firstname;
+            //console.log(name)
+            res.render("user/home",{user:userData.firstname,isLoggedIn:true,products:productData});
 
         }
         else{
-            return res.render("user/home");
+            return res.render("user/home",{user:false,isLoggedIn:false,products:productData});
         }
-        // console.log('home page is loaded');
-        // res.render("user/home");
     } catch (error) {
         console.log('home page not found');
         res.status(500).send("server error");
@@ -200,6 +216,7 @@ const login = async(req,res)=>{
 
         const findUser = await User.findOne({email});
         console.log('findUser',email);
+        console.log('findUser name:',findUser.firstname);
         if(!findUser){
             return res.render('user/login',{message:"user not found"});
         }
@@ -213,12 +230,13 @@ const login = async(req,res)=>{
             return res.render('user/login',{message:"invalid email or password"});
         }
         req.session.userId = findUser._id;
+        console.log(req.session.userId)
 
-        req.session.save((err)=>{
+        await req.session.save((err)=>{
             if(err){
                 return res.redirect('user/login');
             }
-            res.render('user/home');
+            res.render('user/home',{user:findUser.firstname});
         })
 
     } 
@@ -227,6 +245,16 @@ const login = async(req,res)=>{
         res.render('user/login',{message:"login failed"});
     }
 }
+const logout = async (req,res) => {
+    req.session.destroy((err) => {
+        if(err){
+            console.log("error during logout",err);
+            return res.status(500).send("Error logging out.Please try again");
+        }
+        res.clearCookie('connect.sid', {path :'/'});
+        res.redirect('/');
+    });
+};
 module.exports = {
     loadSignup,
     signup,
@@ -236,5 +264,6 @@ module.exports = {
     loadHomepage,
     loadLogin,
     login,
+    logout,
     pageNotFound,
 }

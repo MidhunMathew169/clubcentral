@@ -13,6 +13,7 @@ router.post('/resend-otp',userController.resendOtp);
 router.get('/pageNotFound',userController.pageNotFound);
 router.get('/login',userController.loadLogin);
 router.post('/login',userController.login);
+router.get('/logout',userController.logout);
 
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email'],prompt:'select_account'}));
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{

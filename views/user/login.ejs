@@ -1,3 +1,51 @@
+<style>
+    body {
+        font-family: Arial, sans-serif;
+    }
+    .login-container {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+    }
+    .login-image {
+        background-size: cover;
+        border-radius: 10px;
+        height: 100%;
+    }
+    .login-card {
+        border-radius: 10px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    }
+    .login-card-header {
+        font-weight: bold;
+        font-size: 1.5rem;
+    }
+    .password-container{
+        position: relative;
+    }
+    .toggle-password {
+        position: absolute;
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+        cursor: pointer;
+    }
+    .btn-green {
+        background-color: #28a745;
+        color: white;
+    }
+    .btn-green:hover {
+        background-color: #218838;
+    }
+    .error-message {
+        color: red;
+        font-size: 0.75rem;
+        display: none;
+    }
+</style>
+
+<link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 <div class="container-fluid">
     <div class="row login-container">
         <!-- Left Image Section -->
@@ -18,7 +66,10 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
+                        <div class="password-container">
                         <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password">
+                        <span class="toggle-password" onclick="togglePasswordVisibility()">👁</span>
+                        </div>
                         <a href="#" class="d-block mt-2 text-primary">Forgot Password?</a>
                     </div>
                     <div id="error" class="error-message"></div>
@@ -36,47 +87,26 @@
         </div>
     </div>
 </div>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@1.16.1/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
-
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .login-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-        }
-        .login-image {
-            background-size: cover;
-            border-radius: 10px;
-            height: 100%;
-        }
-        .login-card {
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .login-card-header {
-            font-weight: bold;
-            font-size: 1.5rem;
-        }
-        .btn-green {
-            background-color: #28a745;
-            color: white;
-        }
-        .btn-green:hover {
-            background-color: #218838;
-        }
-        .error-message {
-            color: red;
-            font-size: 0.75rem;
-            display: none;
-        }
-    </style>
 
 <script>
     document.getElementById('loginform').addEventListener('submit',async (e)=>{
         e.preventDefualt();
     })
+</script>
+<script>
+    function togglePasswordVisibility() {
+            const passwordInput = document.getElementById("password");
+            const passwordToggle = document.querySelector(".toggle-password");
+            if (passwordInput.type === "password") {
+                passwordInput.type = "text";
+                passwordToggle.textContent = "🙈"; // Change icon when visible
+            } else {
+                passwordInput.type = "password";
+                passwordToggle.textContent = "👁"; // Change icon back
+            }
+        }
 </script>

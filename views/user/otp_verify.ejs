@@ -104,7 +104,7 @@
             <div class="heading_s1">
                 <h3>Email Verification Page</h3>
             </div>
-            <form id="otpForm" action="/verify-otp" method="POST" onsubmit="return validateOtpForm()">
+            <form id="otpForm" action="/verify-otp" method="POST">
                 <div class="form-group">
                     <label for="otp">Enter OTP:</label>
                     <input type="text" id="otp" name="otp" class="form-control" required maxlength="6" pattern="\d*" />
@@ -114,7 +114,7 @@
                     <div id="otpTimer" class="otp-timer">
                         <span id="timerValue">60</span>
                     </div>
-                    <button type="button" class="btn btn-secondary">Resend OTP</button>
+                    <button type="button" class="btn btn-secondary" onclick="resendOtp()">Resend OTP</button>
                 </div>
                 <% if (locals.message && message.length > 0) { %>
                 <div class="alert alert-danger"><%= message %></div>
@@ -129,6 +129,10 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+    console.log("Checking jQuery and SweetAlert2:");
+    console.log("jQuery Type:", typeof $); // Should print "function"
+    console.log("SweetAlert2 Type:", typeof Swal); // Should print "object"
+
     document.getElementById("otp").focus();
 
     let timer = 60;
@@ -148,6 +152,7 @@
     }
     startTimer();
 
+    document.getElementById("otpForm").addEventListener("submit",validateOtpForm);
     function validateOtpForm(event) {
     event.preventDefault(); // Prevent default form submission
     const otpInput = document.getElementById("otp").value;
@@ -158,6 +163,7 @@
         data: {
             otp: otpInput,
         },
+        dataType:"json",
         success: function (response) {
             console.log(response,"ajax ressponse");
             if (response.success) {
@@ -177,7 +183,8 @@
                 });
             }
         },
-        error: function () {
+        error: function (xhr) {
+            console.log("AJAX Error:",xhr.responseText);
             Swal.fire({
                 icon: "error",
                 title: "Invalid OTP",

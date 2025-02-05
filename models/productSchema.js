@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { type } = require("os");
 const {Schema} = mongoose;
 
 const productSchema = new Schema({
@@ -12,10 +13,10 @@ const productSchema = new Schema({
     },
     brand : {
         type : String,
-        required : true
+        required : false
     },
     category : {
-        type : Schema.Types.ObjectId,
+        type : mongoose.Schema.Types.ObjectId,
         ref : "Category",
         required : true
     },
@@ -23,7 +24,7 @@ const productSchema = new Schema({
         type : Number,
         required : true
     },
-    salesPrice : {
+    salePrice : {
         type : Number,
         required : true
     },
@@ -31,15 +32,34 @@ const productSchema = new Schema({
         type : Number,
         default : 0
     },
-    quantity : {
-        type : Number,
-        default : true
+    // quantity : {
+    //     type : Number,
+    //     default : true
+    // },
+    sizes : [{
+        size: {
+            type: String,
+            required : true
+        },
+        quantity: {
+            type: Number,
+            required : true,
+            default : 0
+        }
+    }],
+    fitType : {
+        type : String,
+        required : true
+    },
+    sleeve : {
+        type : String,
+        required : true
     },
     productImage : {
         type : [String],
         required : true
     },
-    isBlocked : {
+    isListed : {
         type : Boolean,
         default : false
     },

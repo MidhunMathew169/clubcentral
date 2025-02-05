@@ -1,0 +1,273 @@
+<title>Product Management</title>
+
+<style>
+    .flex-h-screen {
+        display: flex;
+        min-height: 100vh;
+    }
+    .flex-1 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+    .main-content {
+        padding: 20px;
+        flex: 1;
+    }
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 0 20px;
+    }
+    .header-section h2 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+    .search-input {
+        width: 300px;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-right: 20px;
+    }
+    .btn-add {
+        background-color: #000;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .table-responsive {
+        overflow-x: auto;
+        background: white;
+        margin: 0 20px;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table th {
+        background-color: #000;
+        color: white;
+        font-weight: 500;
+        text-align: left;
+        padding: 12px 15px;
+        white-space: nowrap;
+    }
+    .table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+        height: 80px;
+        position: relative;
+    }
+    .table tr td {
+        line-height: normal;
+    }
+    .product-image {
+        width: 60px;
+        height: 80px;
+        object-fit: cover;
+        border-radius: 4px;
+    }
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 24px;
+    }
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+        border-radius: 34px;
+    }
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+        border-radius: 50%;
+    }
+    input:checked + .slider {
+        background-color: #4CAF50;
+    }
+    input:checked + .slider:before {
+        transform: translateX(26px);
+    }
+    .btn-edit {
+        background-color: #000;
+        color: white;
+        border: none;
+        padding: 6px 12px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 14px;
+        width: 100px;
+        text-align: center;
+        white-space: nowrap;
+        height: 32px;
+        line-height: 20px;
+        display: inline-block;
+    }
+    .offer-cell {
+        padding: 12px 15px !important;
+        display: flex;
+        align-items: center;
+        height: 80px;
+    }
+    .offer-content {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        height: 100%;
+    }
+    .offer-text {
+        font-weight: 500;
+        white-space: nowrap;
+        display: inline-block;
+    }
+</style>
+
+<div class="flex-h-screen">
+    <!--side bar section-->
+    <%- include('../partials/admin/side bar') %>
+    <div class="flex-1">
+        <!--header section-->
+        <%- include('../partials/admin/header') %>
+        <div class="main-content">
+            <div class="header-section">
+                <h2>PRODUCTS</h2>
+                <div style="display: flex; align-items: center;">
+                    <input type="text" class="search-input" placeholder="Search products...">
+                    <button class="btn-add" onclick="location.href='/admin/addProducts'">
+                        Add New Product
+                    </button>
+                </div>
+            </div>
+
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>SNO</th>
+                            <th>Image</th>
+                            <th>Product Name</th>
+                            <th>Category</th>
+                            <th>R Price</th>
+                            <th>S Price</th>
+                            <th>Stock</th>
+                            <th>List</th>
+                            <th>Action</th>
+                            <th>Offer</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+
+                        <% for(let i = data.length-1; i >= 0; i--) { %>
+                        <tr>
+                            <td><%= data.length-i %></td>
+                            <td>
+                                <img src="/uploads/re-images/<%= data[i].productImage[0] %>" alt="Product" class="product-image">
+                            </td>
+                            <td><%= data[i].productName %></td>
+                            <td><%= data[i].category.name %></td>
+                            <td><%= data[i].regularPrice %></td>
+                            <td><%= data[i].salePrice %></td>
+                            <td><%= data[i].quantity %></td>
+                            <td>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" class="toggle-product" data-product-id="<%= data[i]._id %>" <%= data[i].isListed ? 'checked' : '' %>>
+                                    <span class="slider"></span>
+                                </label>
+                            </td>
+                            <td>
+                                <button class="btn-edit" onclick="location.href='/admin/editProducts/<%= data[i]._id %>'">Edit Product</button>
+                            </td>
+                            <td class="offer-cell">
+                                <div class="offer-content">
+                                    <span class="offer-text"><%= data[i].productOffer === 0 ? 'N/A':data[i].productOffer %></span>
+                                    <button class="btn-edit">Edit Offer</button>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <% } %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="container mt-3">
+            <nav aria-label="Page navigation">
+                <ul class="pagination justify-content-center mb-20" style="margin-right: 200px;">
+         
+         
+                    <% for (let i = 1; i <= totalPages; i++) { %>
+                    <li class="page-item <%=(i === currentPage) ? 'active' : '' %>">
+                        <a class="page-link" href="?page=<%= i %>"><%= i %></a>
+                    </li>
+                    <% } %>
+         
+         
+                </ul>
+            </nav>
+         </div>
+         
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    const toggleSwitches = document.querySelectorAll('.toggle-product');
+
+    toggleSwitches.forEach(toggle => {
+        toggle.addEventListener('change', async function () {
+            const productId = this.getAttribute('data-product-id');
+            const isListed = this.checked;
+
+            console.log("sending request:",{productId,isListed})
+
+            try {
+                const response = await axios.patch(`/admin/toggle-product/${productId}`, { isListed });
+
+                if (response.status !== 200) {
+                    throw new Error('Failed to update product status');
+                }
+                console.log("response recieved",response.data);
+                
+            } catch (error) {
+                console.error(error);
+                alert("Error updating product status");
+                this.checked = !isListed; // Revert checkbox state on failure
+            }
+        });
+    });
+});
+
+
+    function editProduct(productId) {
+        // Add your edit functionality here
+    }
+
+    function handleOffer(productId, hasOffer) {
+        // Add your offer handling functionality here
+    }
+</script>
