@@ -1,0 +1,575 @@
+
+<!--Header section-->
+<%-include("../partials/user/header")%>
+<style>
+        .custom-cart-button {
+                width: 150px;
+                /* Adjust width as desired */
+                height: 40px;
+                /* Adjust height as desired */
+                font-size: 16px;
+                /* Control font size */
+                padding: 10px 20px;
+                /* Adjust padding */
+                background-color: #4CAF50;
+                /* Add your preferred background color */
+                color: #fff;
+                /* Text color */
+                border: none;
+                border-radius: 5px;
+                /* Rounded corners */
+                cursor: pointer;
+                transition: background-color 0.3s ease;
+            }
+
+            .zoom-container {
+                overflow: hidden;
+                /* Prevents the zoomed image from overflowing the container */
+                position: relative;
+                /* Required for positioning */
+            }
+            #wish{
+                background-color: #45a049;
+                border: none;
+                padding: 5px;
+                
+            }
+
+            #zoomable-image {
+                transition: transform 0.2s ease;
+                /* Smooth transition for zooming */
+                display: block;
+                /* Prevents gaps below the image */
+            }
+
+            .custom-cart-button:hover {
+                background-color: #45a049;
+                /* Slightly darker color on hover */
+            }
+
+            /* Add this to your CSS file */
+            .quantity-input {
+                width: 80px;
+                /* Adjust the width as needed */
+            }
+            
+            /* Product Details Styling */
+            .detail-info {
+                padding: 2rem;
+                background: #fff;
+                border-radius: 20px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+                transition: all 0.3s ease;
+            }
+            
+            .title-detail {
+                font-size: 2.5rem;
+                font-weight: 700;
+                color: #2d3436;
+                margin-bottom: 1.5rem;
+                font-family: 'Segoe UI', sans-serif;
+                line-height: 1.2;
+            }
+            
+            /* Category and Rating */
+            .product-detail-rating {
+                background: #f8f9fa;
+                padding: 1rem 1.5rem;
+                border-radius: 15px;
+                margin-bottom: 1.5rem;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+            }
+            
+            .pro-details-brand {
+                background: #006A67;
+                padding: 0.5rem 1.5rem;
+                border-radius: 50px;
+                transition: all 0.3s ease;
+            }
+            
+            .pro-details-brand span, .pro-details-brand a {
+                color: white;
+                text-decoration: none;
+                font-weight: 500;
+            }
+            
+            .pro-details-brand:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 5px 15px rgba(0,106,103,0.2);
+            }
+            
+            /* Price Styling */
+            .product-price {
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+                margin: 1.5rem 0;
+            }
+            
+            .text-brand {
+                font-size: 2rem;
+                color: #006A67;
+                font-weight: 700;
+            }
+            
+            .old-price {
+                text-decoration: line-through;
+                color: #999;
+                font-size: 1.2rem;
+            }
+            
+            .save-price {
+                background: linear-gradient(45deg, #006A67, #00857f);
+                color: white;
+                padding: 0.5rem 1.5rem;
+                border-radius: 50px;
+                font-weight: 500;
+                animation: pulseSave 2s infinite;
+            }
+            
+            @keyframes pulseSave {
+                0% { transform: scale(1); }
+                50% { transform: scale(1.05); }
+                100% { transform: scale(1); }
+            }
+            
+            /* Description */
+            .short-desc {
+                background: #f8f9fa;
+                padding: 1.5rem;
+                border-radius: 15px;
+                margin: 1.5rem 0;
+                transition: all 0.3s ease;
+            }
+            
+            .short-desc:hover {
+                transform: translateY(-2px);
+                background: #f1f3f5;
+            }
+            
+            /* Product Features */
+            .product_sort_info ul {
+                list-style: none;
+                padding: 0;
+            }
+            
+            .product_sort_info li {
+                padding: 1rem 1.5rem;
+                background: #f8f9fa;
+                border-radius: 10px;
+                margin-bottom: 0.8rem;
+                transition: all 0.3s ease;
+                display: flex;
+                align-items: center;
+                gap: 1rem;
+            }
+            
+            .product_sort_info li i {
+                color: #006A67;
+                font-size: 1.2rem;
+            }
+            
+            .product_sort_info li:hover {
+                transform: translateX(10px);
+                background: #f1f3f5;
+            }
+            
+            /* Stock Status */
+            .product-meta {
+                background: #f8f9fa;
+                padding: 1rem 1.5rem;
+                border-radius: 10px;
+                margin-top: 1.5rem;
+            }
+            
+            .in-stock {
+                background: #00b894;
+                color: white;
+                padding: 0.3rem 1rem;
+                border-radius: 50px;
+                font-size: 0.9rem;
+                font-weight: 500;
+            }
+            
+            /* Buttons Container */
+            .detail-extralink {
+                display: flex;
+                gap: 1rem;
+                margin-top: 2rem;
+            }
+            
+            /* Action Buttons */
+            .action-btn {
+                width: 45px;
+                height: 45px;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 50%;
+                background: #f8f9fa;
+                color: #006A67;
+                transition: all 0.3s ease;
+            }
+            
+            .action-btn:hover {
+                background: #006A67;
+                color: white;
+                transform: rotate(360deg);
+            }
+            
+            /* Responsive Design */
+            @media (max-width: 768px) {
+                .detail-info {
+                    padding: 1rem;
+                }
+                
+                .title-detail {
+                    font-size: 1.8rem;
+                }
+                
+                .product-price {
+                    flex-direction: column;
+                    align-items: flex-start;
+                }
+                
+                .detail-extralink {
+                    flex-direction: column;
+                }
+            }
+            
+/* Add to Cart Button */
+#add {
+    background: linear-gradient(45deg, #006A67, #00857f);
+    color: white;
+    border: none;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    box-shadow: 0 5px 15px rgba(0,106,103,0.2);
+}
+
+#add:hover {
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 10px 25px rgba(0,106,103,0.3);
+}
+
+#add span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+#add i {
+    transition: transform 0.3s ease;
+}
+
+#add:hover i {
+    transform: translateX(5px);
+}
+
+/* Wishlist Button */
+.wish {
+    background: transparent;
+    color: #006A67;
+    border: 2px solid #006A67;
+    padding: 1rem 2.5rem;
+    border-radius: 50px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+}
+
+.wish span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    position: relative;
+    z-index: 1;
+}
+
+.wish:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #006A67, #00857f);
+    transition: all 0.5s ease;
+    z-index: 0;
+}
+
+.wish:hover {
+    color: white;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(0,106,103,0.2);
+}
+
+.wish:hover:before {
+    left: 0;
+}
+
+.wish i {
+    transition: transform 0.3s ease;
+}
+
+.wish:hover i {
+    transform: scale(1.2);
+}
+
+@keyframes heartBeat {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+}
+
+.wish.clicked i {
+    animation: heartBeat 0.3s ease;
+    color: #ff4757;
+}
+
+/* Action Buttons Container */
+.action-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+.size-btn {
+    min-width: 50px;
+    height: 40px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+.size-btn.selected {
+    background-color: #212529;
+    color: white;
+}
+    .size-btn-container {
+                display: inline-flex;
+                flex-direction: column;
+                align-items: center;
+                margin: 0.5rem;
+            }
+            .size-btn {
+                min-width: 60px;
+                position: relative;
+                padding: 0.5rem 1rem;
+            }
+            .size-btn.disabled {
+                opacity: 0.6;
+                cursor: not-allowed;
+            }
+            .stock-badge {
+                position: absolute;
+                top: -8px;
+                right: -8px;
+                font-size: 0.7em;
+                min-width: 20px;
+                height: 20px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .size-btn.active {
+                background-color: #212529;
+                color: white;
+            }
+            #quantityInfo {
+                background-color: #f8f9fa;
+                padding: 1rem;
+                border-radius: 0.5rem;
+                border: 1px solid #dee2e6;
+            }
+</style>
+<main class="main">
+    <div class="page-header breadcrumb-wrap">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span></span>kit
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <section class="mt-50 mb-50">
+        <div class="container">
+            <div class="row flex-row-reverse">
+                <div class="col-lg-9 col-lg-3">
+                    <div class="product-detail accordion-detail">
+                        <div class="row mb-50">
+                            <!--product image section-->
+                            <div class="col-md-6 col-sm-12">
+                                <div class="detail-gallery">
+                                    <!--main product image-->
+                                    <div class="zoom-container">
+                                        <img id="zoomable-image" class="rounded-lg"
+                                        height="400" width="400"
+                                         src="<%= productData.productImage && productData.productImage.length ? '/uploads/re-images' + productData.productImage[0] : 'images/no_productImage.png' %>" 
+                                         alt="">
+                                    </div>
+                                    <!--thumbnails-->
+                                    <div class="slider-nav-thumbnails mt-3 d-flex">
+                                        <% productData.productImage.forEach((image,index)=>{ %>
+                                            <img alt="Thumbnail<% index %>" class="Thumbnail rounded-lg me-2"
+                                            height="150" width="130" src="/uploads/re-images/<%= image %>"
+                                            onclick="">
+                                            <% }) %>
+                                    </div>
+                                    <!--social media share-->
+                                    <div class="social-icons single-share mt-3">
+                                        <ul class="text-grey-5 d-inline-block">
+                                            <li><strong class="me-2">Share this:</strong></li>
+                                            <li class="social-facebook"><a href="#"><img
+                                                        src="assets/imgs/theme/icons/icon-facebook.svg" alt=""></a>
+                                            </li>
+                                            <li class="social-twitter"><a href="#"><img
+                                                        src="assets/imgs/theme/icons/icon-twitter.svg" alt=""></a>
+                                            </li>
+                                            <li class="social-instagram"><a href="#"><img
+                                                        src="assets/imgs/theme/icons/icon-instagram.svg" alt=""></a>
+                                            </li>
+                                            <li class="social-linkedin"><a href="#"><img
+                                                        src="assets/imgs/theme/icons/icon-pinterest.svg" alt=""></a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+                            <!--product details section-->
+                            <div class="col-md-6 col-sm-12">
+                                <div class="detail-info">
+                                    <h2 class="title-detail">
+                                        <%= productData.productName %>
+                                    </h2>
+                                    <div class="product-detail-rating">
+                                        <div class="pro-details-brand">
+                                            <span>Category: <a href="shop-grid-right.html">
+                                                <%= productData.category.name %>
+                                            </a></span>
+                                        </div>
+                                        <div class="product-rate-cover text-end">
+                                            <div class="product-rate d-inline-block">
+                                                <div class="product-rating" style="width:90%"></div>
+                                            </div>
+                                            <span class="font-small ms-2 text-muted">(25 reviews)</span>
+                                        </div>
+                                    </div>
+                                    <div class="clearfix product-price-cover">
+                                        <div class="product-price primary-color float-left">
+                                            <ins><span class="text-brand"><%= productData.salePrice %></span></ins>
+                                                <ins><span class="old-price font-md ms-2"><%= productData.regularPrice %></span></ins>
+                                                <span class="hot" color: white; padding: 3px 5px; font-size: 12px;>
+                                                    <span class="save-price font-md color3 ms-2"> 20% OFF</span>
+                                                </span>
+                                        </div>
+                                    </div>
+                                    <div class="bt-1 border-color-1 mt-3 mb-3"></div>
+                                    <div class="short-desc mb-3">
+                                        <p>
+                                            <%= productData.description %>
+                                        </p>
+                                    </div>
+                                    <h6 class="mb-2">Select Size:</h6>
+                                    <div class="d-flex flex-wrap gap-2 mb-3">
+                                        <input type="hidden" id="selectedSizeMain" name="selectedSize" value="">
+                                        <% if(productData.sizes && productData.sizes.length > 0) { %>
+                                            <% productData.sizes.sort((a,b) => a.size - b.size).forEach(sizeData => { %>
+                                           <button type="button" 
+                                            class="btn btn-outline-dark size-btn me-2" 
+                                            onclick="handleSizeSelect('<%= sizeData.size %>', '<%= sizeData.quantity %>')"
+                                            data-size="<%= sizeData.size %>"
+                                            <%= sizeData.quantity === 0 ? 'disabled' : '' %>>
+                                            <%= sizeData.size %>
+                                        </button>
+                                                <% }) %>
+                                            <% }else{ %>
+                                                <p class="text-muted">No sizes available</p>
+                                                <% } %>
+                                    </div>
+                                    <!--div for display quantity-->
+                                    <div id="qtyInfo" class="alert alert-info" style="display: none;">
+                                        Size <span id="sizeValue"></span>: <span id="qtyValue"></span> pairs available
+                                    </div>
+                                    <!--div for display quantity-->
+                                    <div id="qtyInfo" class="alert alert-info" style="display: none;">
+                                        Size <span id="sizeValue"></span>: <span id="qtyValue"></span> pairs available
+                                    </div>
+
+                                    <!--add quantity display section-->
+                                    <div id="quantityInfo" class="mt-3" style="display: none;">
+                                        <div class="d-flex align-items-center">
+                                            <h6 class="mb-0 me-2">Available Quantity:</h6>
+                                            <span id="availableQuantity" class="badge bg-primary"></span>
+                                        </div>
+                                    </div>
+
+                                    <input type="hidden" id="selectedSizeHidden" name="size">
+                                    <% if (productData.quantity <=0) { %>
+                                        <div class="alert alert-danger" role="alert">This product is currently out
+                                            of stock.</div>
+                                        <% } %>
+                                        <div class="product_sort_info font-xs mb-3">
+                                            <ul>
+                                                <li class="mb-2"><i class="fi-rs-crown me-2"></i> 1 Year AL
+                                                    Jazeera Brand Warranty</li>
+                                                <li class="mb-2"><i class="fi-rs-refresh me-2"></i> 30 Day
+                                                    Return Policy</li>
+                                                <li><i class="fi-rs-credit-card me-2"></i> Cash on Delivery
+                                                    available</li>
+                                            </ul>
+                                        </div>
+                                        <div class="detail-extralink d-flex gap-2">
+                                            <form class="add-to-cart">
+                                                <button class="<%= productData.quantity !== 0 ? 'btn btn-sm px-3 py-1' : 'd-none' %>" type="button" id="add" onclick="addToCart('<%= productData._id %>')">
+                                                    <i class="fas fa-shopping-cart fa-sm"></i>
+                                                    Add to Cart
+                                                </button>
+                                            </form>
+                                            <form id="wishlistForm" data-product-id="<%= productData._id %>">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary px-3 py-1" id="wish" onclick="addToWishlist('<%= productData._id %>')">
+                                                    <i class="fas fa-heart fa-sm"></i>
+                                                    Add to Wishlist
+                                                </button>
+                                            </form>
+                                            
+                                        </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="tab-style3">
+                        <ul class="nav nav-tabs text-uppercase">
+                            <li class="nav-item">
+                                <a class="nav-link active" id="Description-tab" data-bs-toggle="tab"
+                                    href="#Description">Description</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="Additional-info-tab" data-bs-toggle="tab"
+                                    href="#Additional-info">Additional info</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" id="Reviews-tab" data-bs-toggle="tab" href="#Reviews">Reviews
+                                    (3)</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+<!--footer section-->
+<%- include("../partials/user/footer") %>

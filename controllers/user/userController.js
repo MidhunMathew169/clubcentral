@@ -4,6 +4,7 @@ const Product = require("../../models/productSchema");
 const env = require("dotenv").config();
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
+const { session } = require("passport");
 
 const loadSignup = async(req,res)=>{
     try {
@@ -151,17 +152,6 @@ const verifyOtp = async(req,res)=>{
         }
     }
 
-
-const pageNotFound = async(req,res)=>{
-    try {
-        //console.log('page not found is loaded');
-       res.render('user/page-404'); 
-    } catch (error) {
-        //res.redirect('/pageNotFound')
-        res.status(400).send("page not found");
-    }
-}
-
 const loadHomepage = async(req,res)=>{
     try {
         const user = req.session.user;
@@ -173,9 +163,9 @@ const loadHomepage = async(req,res)=>{
         let productData = await Product.find({
             isListed:true,
             category:{$in:categories.map(category=>category._id)},
-            quantity:{$gt:0}
+            //quantity:{$gt:0}
         })
-
+        console.log('productData is:',productData)
         productData.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
         productData = productData.slice(0,4);
 
@@ -184,11 +174,11 @@ const loadHomepage = async(req,res)=>{
             console.log('User Data:', userData);
             //const name = userData.firstname;
             //console.log(name)
-            res.render("user/home",{user:userData.firstname,isLoggedIn:true,products:productData});
+            res.render("user/home",{user:userData.firstname,isLoggedIn:true,productData});
 
         }
         else{
-            return res.render("user/home",{user:false,isLoggedIn:false,products:productData});
+            return res.render("user/home",{user:false,isLoggedIn:false,productData});
         }
     } catch (error) {
         console.log('home page not found');
@@ -255,6 +245,54 @@ const logout = async (req,res) => {
         res.redirect('/');
     });
 };
+
+const loadShoppingPage = async (req,res)=>{
+    console.log('shop page triggered');
+    try {
+        const user = req.session.user;
+        console.log('User in the session:',req.session.user)
+        const userData = user ? await User.findOne({_id:user}) : null;
+        const categories = await Category.find({isListed:true});
+        const categoryIds = categories.map((category)=>category._id.toString());
+        const page = parseInt(req.query.page) || 1;
+        const limit = 6;
+        const skip = (page-1)*limit;
+        const productData = await Product.find({
+            isListed:true,
+            category:{$in:categoryIds}
+        }).sort({createdAt:-1}).skip(skip).limit(limit);
+
+        const totalProducts = await Product.countDocuments({
+            isListed:true,
+            category:{$in:categoryIds}
+        });
+ 
+        const totalPages = Math.ceil(totalProducts/limit);
+        const categoriesWithIds =  categories.map(category => ({_id:category._id,name:category.name}));
+        res.render('user/shop',{
+            user:userData,
+            productData:productData,
+            category:categoriesWithIds,
+            totalProducts:totalProducts,
+            currentPage:page,
+            totalPages:totalPages
+        })
+    } catch (error) {
+        //res.redirect('/pageNotFound')
+        console.log('shop page not found');
+        res.status(500).send("server error");
+    }
+}
+
+const pageNotFound = async(req,res)=>{
+    try {
+        //console.log('page not found is loaded');
+       res.render('user/page-404'); 
+    } catch (error) {
+        //res.redirect('/pageNotFound')
+        res.status(400).send("page not found");
+    }
+}
 module.exports = {
     loadSignup,
     signup,
@@ -265,5 +303,6 @@ module.exports = {
     loadLogin,
     login,
     logout,
-    pageNotFound,
+    loadShoppingPage,
+    pageNotFound
 }
