@@ -1,8 +1,9 @@
 const express = require("express");
 const router = express.Router();
-
 const userController = require("../controllers/user/userController");
 const productController = require("../controllers/user/productController");
+const forgotController = require("../controllers/user/forgotController");
+const {sessionValidator} = require("../middlewares/auth");
 const passport = require("passport");
 
 //signup management
@@ -20,9 +21,17 @@ router.get('/login',userController.loadLogin);
 router.post('/login',userController.login);
 router.get('/logout',userController.logout);
 
-router.get('/',userController.loadHomepage);
-router.get('/shop',userController.loadShoppingPage);
-router.get('/productdetails/:id',productController.productDetail);
+//forgot password
+router.get('/forgotPassword',userController.forgotPassW);
+router.post('/forgotPassword',forgotController.forgotPassword);
+router.post('/resetCode',forgotController.codeVerification);
+router.get('/verification',forgotController.verify)
+router.get('/resetPass',forgotController.resetPassw);
+router.post('/resetPassword',forgotController.resetPassword);
+
+router.get('/',sessionValidator,userController.loadHomepage);
+router.get('/shop',sessionValidator,userController.loadShoppingPage);
+router.get('/productdetails/:id',sessionValidator,productController.productDetail);
 
 router.get('/pageNotFound',userController.pageNotFound);
 

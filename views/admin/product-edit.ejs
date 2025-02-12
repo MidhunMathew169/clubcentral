@@ -163,7 +163,7 @@
                 <h2>ADD PRODUCT</h2>
             </div>
 
-            <form action="/admin/editProducts/<%= product._id %>" method="POST" enctype="multipart/form-data">
+            <form action="/admin/editProducts/<%= product._id %>" method="POST" enctype="multipart/form-data" onsubmit="validateForm()">
                 <div class="form-section">
                     <div class="section-title">General Information</div>
                     <div class="section-content">
@@ -220,7 +220,7 @@
                                                onchange="viewImage(event, '<%= i %>')">
                                                <input type="hidden" name="removedImages" id="removedImagesInput">
                                                
-                                        <button type="button" class="btn btn-danger mt-2" onclick="removeImage('<%= i %>')">Remove</button>
+                                        <button type="button" class="btn btn-danger mt-2" onclick="removeImage('<%= product.productImage[i] %>','<%= product._id %>')">Remove</button>
                 
                                         <div class="cropper-container" id="cropperContainer<%= i %>" style="display: none;">
                                             <button type="button" class="btn btn-primary mt-2" 
@@ -283,7 +283,7 @@
 
                 <div class="button-group">
                     <button type="button" class="btn btn-secondary" onclick="history.back()">CANCEL</button>
-                    <button type="submit" class="btn btn-primary">UPDATE PRODUCT</button>
+                    <button type="submit" class="btn btn-primary" onclick="">UPDATE PRODUCT</button>
                 </div>
             </form>
         </div>
@@ -337,21 +337,101 @@ function saveCroppedImage(index) {
     }
 }
 
-function removeImage(index) {
-    document.getElementById(`imgView${index}`).src = "";
-    document.getElementById(`input${index}`).value = ""; // Clear file input
+// function removeImage(index) {
+//     document.getElementById(`imgView${index}`).src = "";
+//     document.getElementById(`input${index}`).value = ""; // Clear file input
 
-    // Hide Cropper container if open
-    document.getElementById(`cropperContainer${index}`).style.display = "none";
+//     // Hide Cropper container if open
+//     document.getElementById(`cropperContainer${index}`).style.display = "none";
 
-    if (croppers[index]) {
-        croppers[index].destroy();
-        croppers[index] = null;
+//     if (croppers[index]) {
+//         croppers[index].destroy();
+//         croppers[index] = null;
+//     }
+
+//     //track removed images
+//     removedImages.push(product.productImage[index]);
+//     document.getElementById("removedImagesInput").value = JSON.stringify(removedImages)
+// }
+// function removeImage(index) {
+//     let removedImagesInput = document.getElementById("removedImagesInput");
+//     let currentImages = removedImagesInput.value ? removedImagesInput.value.split(",") : [];
+
+//     let imageSrc = document.getElementById(`imgView${index}`).src.split("/").pop(); // Extract filename
+//     if (!currentImages.includes(imageSrc)) {
+//         currentImages.push(imageSrc);
+//     }
+
+//     removedImagesInput.value = currentImages.join(",");
+//     document.getElementById(`imgView${index}`).style.display = "none"; // Hide preview
+// }
+
+function validateForm() {
+        clearErrorMessage();
+
+        const name = document.getElementsByName('productName')[0]?.value || '';
+        const description = document.getElementById('descriptionid')?.value || '';
+        const price = document.getElementsByName('regularPrice')[0]?.value || '';
+        const category = document.getElementsByName('category')[0]?.value || '';
+        //const quantity = document.getElementsByName('quantity')[0]?.value || '';
+        let isValid = true;
+
+        if(name.trim() === "") {
+            displayErrorMessage('productName-error','Product name is required');
+            isValid = false;
+        }
+        if(description.trim() === "") {
+            displayErrorMessage('description-error', 'Please enter a description');
+            isValid = false;
+        }
+
+        const priceValue = parseFloat(price);
+        if(!price || isNaN(priceValue) || priceValue <= 0){
+            displayErrorMessage('regularPrice-error','enter valid price');
+            isValid = false;
+        }
+
+        const salePriceVal = parseFloat(price);
+        if(!price || isNaN(salePriceVal) || salePriceVal <= 0){
+            displayErrorMessage('salePrice-error','enter valid price');
+            isValid = false;
+        }
+
+        if(category.trim() === ""){
+            displayErrorMessage('category-error', 'Please select a category');
+            isValid = false;
+        }
+
+        // const quantityValue = parseInt(quantity, 10);
+        // if (quantity.trim() === "" || isNaN(quantityValue) || quantityValue <= 0) {
+        //         displayErrorMessage('quantity-error', 'Please enter a valid quantity');
+        //         isValid = false;
+        //     }
+
+        return isValid;    
     }
 
-    //track removed images
-    removedImages.push(product.productImage[index]);
-    document.getElementById("removedImagesInput").value = JSON.stringify(removedImages)
-}
+    function clearErrorMessage() {
+        const errorMessages = document.getElementsByClassName('error-message');
+        for(let errorMessage of errorMessages){
+            errorMessage.innerHTML = "";
+        }
+    }
 
+    function displayErrorMessage(id, message){
+        document.getElementById(id).innerHTML = message;
+    }
+
+    function removeImage(imageId,productId){
+        $.ajax({
+            url:"/admin/deleteImage",
+            method:'post',
+            data:{imageNameToServer:imageId,productIdToServer:productId},
+            success:((response)=>{
+                if(response.status === true){
+                    window.location.reload();
+                }
+            })
+        })
+    }
 </script>

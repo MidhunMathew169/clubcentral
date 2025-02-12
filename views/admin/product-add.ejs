@@ -165,7 +165,7 @@
                 <h2>ADD PRODUCT</h2>
             </div>
 
-            <form action="/admin/addProducts" method="POST" enctype="multipart/form-data">
+            <form id="productForm" enctype="multipart/form-data">
                 <div class="form-section">
                     <div class="section-title">General Information</div>
                     <div class="section-content">
@@ -208,28 +208,7 @@
                 <div class="form-section">
                     <div class="section-title">Product Images</div>
                     <div class="section-content">
-                        <!--<div class="image-upload-box main-image-box">
-                            <i class="fas fa-cloud-upload-alt fa-2x"></i>
-                            <p>Drag and drop main image here or click to upload</p>
-                            <input type="file" name="mainImage" style="display: none;" accept="image/*">
-                        </div>
-                        <div class="image-upload-section">
-                            <div class="image-upload-box">
-                                <i class="fas fa-plus"></i>
-                                <p>Additional Image</p>
-                                <input type="file" name="additionalImages" style="display: none;" accept="image/*">
-                            </div>
-                            <div class="image-upload-box">
-                                <i class="fas fa-plus"></i>
-                                <p>Additional Image</p>
-                                <input type="file" name="additionalImages" style="display: none;" accept="image/*">
-                            </div>
-                            <div class="image-upload-box">
-                                <i class="fas fa-plus"></i>
-                                <p>Additional Image</p>
-                                <input type="file" name="additionalImages" style="display: none;" accept="image/*">
-                            </div>
-                        </div>-->
+                        
                         <div class="row">
                             <% for(let i = 1; i <= 4; i++) { %>
                                 <div class="col-md-6 mb-4">
@@ -375,13 +354,57 @@ function saveCroppedImage(index) {
         cropper = null; 
     }
 }
+    // function validateAndSubmit(event){
+    //     event.preventDefault();
+    //     if(validateForm()){
+    //         //document.form[0].submit();   
+    //     }
+    // }
 
+    document.getElementById("productForm").addEventListener("submit",async function(event){
+        event.preventDefault();
 
-    function validateAndSubmit(){
-        if(validateForm()){
-            document.form[0].submit();
+        if (!validateForm()){
+            console.log('validation error');
+            //return
         }
-    }
+
+        const productData = new FormData(this);
+
+        console.log([...productData]);
+
+        try {
+            const response = await axios.post('/admin/addProducts', productData, {
+                headers: {'Content-Type':'multipart/form-data'}
+            });
+
+            if(response.data.success){
+                swal.fire({
+                    icon: 'success',
+                    title: 'Product Added',
+                    text: response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(()=> {
+                    window.location.href = '/admin/products';
+                });
+            }
+            else{
+                swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text:response.data.error
+                })
+            }
+        } catch (error) {
+            swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'failed to add the product',
+                confirmButtonText: 'OK'
+            })
+        }
+    })
 
     function validateForm() {
         clearErrorMessage();
@@ -390,7 +413,7 @@ function saveCroppedImage(index) {
         const description = document.getElementById('descriptionid')[0]?.value || '';
         const price = document.getElementsByName('regularPrice')[0]?.value || '';
         const category = document.getElementsByName('category')[0]?.value || '';
-        const quantity = document.getElementsByName('quantity')[0]?.value || '';
+        //const quantity = document.getElementsByName('quantity')[0]?.value || '';
         let isValid = true;
 
         if(name.trim() === "") {
@@ -408,16 +431,22 @@ function saveCroppedImage(index) {
             isValid = false;
         }
 
+        const salePriceVal = parseFloat(price);
+        if(!price || isNaN(salePriceVal) || salePriceVal <= 0){
+            displayErrorMessage('salePrice-error','enter valid price');
+            isValid = false;
+        }
+
         if(category.trim() === ""){
             displayErrorMessage('category-error', 'Please select a category');
             isValid = false;
         }
 
-        const quantityValue = parseInt(quantity, 10);
-        if (quantity.trim() === "" || isNaN(quantityValue) || quantityValue <= 0) {
-                displayErrorMessage('quantity-error', 'Please enter a valid quantity');
-                isValid = false;
-            }
+        // const quantityValue = parseInt(quantity, 10);
+        // if (quantity.trim() === "" || isNaN(quantityValue) || quantityValue <= 0) {
+        //         displayErrorMessage('quantity-error', 'Please enter a valid quantity');
+        //         isValid = false;
+        //     }
 
         return isValid;    
     }

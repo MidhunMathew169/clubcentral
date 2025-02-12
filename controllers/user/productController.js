@@ -13,9 +13,15 @@ const productDetail = async (req,res)=>{
         }
         const findCategory = productData.category;
 
+        const relatedProducts = await Product.find({
+            category:findCategory,
+            _id:{$ne:productId}
+        }).limit(4);
+
         res.render('user/product-details',{
             user:userId,
-            productData:productData
+            productData:productData,
+            relatedProducts:relatedProducts
         })
     } catch (error) {
         console.log('product details page is not found');

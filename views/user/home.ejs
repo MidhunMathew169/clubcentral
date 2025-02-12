@@ -1,9 +1,6 @@
 
     <!-- Header Section End -->
     <%-include("../partials/user/header")%>
-    <link rel="stylesheet" href="">
-    <link rel="stylesheet" href="css/owl.carousel.min.css" type="text/css">
-    <link rel="stylesheet" href="css/slicknav.min.css" type="text/css">
 
     <style>
         .hero-section {
@@ -106,27 +103,139 @@
       transform: translateY(1px);
   }
 
+  .product-grid{
+    margin: 0 -15px;
+  }
+
+  .product-card{
+    background: #fff;
+    border-radius: 15px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+    transition: all 0.3s ease;
+    height: 100%;
+    overflow: hidden;
+  }
+
+  .product-img-wrapper{
+    position: relative;
+    padding-top: 100%;
+    overflow: hidden;
+    border-radius: 15px 15px 0 0;
+  }
 
   .product-img-action-wrap {
       position: relative;
   }
 
-
   .product-img {
-      position: relative;
-      display: block;
-      overflow: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.5s ease;
   }
 
+  .product-action-buttons{
+    position: absolute;
+    right: 15px;
+    top: 15px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 0.3s ease;
+  }
 
-  .product-cart-wrap {
+  .product-card:hover .product-action-buttons{
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .action-button{
+    background: #fff;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+  }
+
+  .action-button:hover{
+    background: #28a745;
+    color: #fff;
+    transform: translateY(-2px);
+  }
+
+  .product-info {
+    padding: 20px;
+  }
+
+  .product-category{
+    color: #888;
+    font-size: 0.9rem;
+    margin-bottom: 8px;
+    display: block;
+  }
+  
+  .product-title{
+    font-size: 1.1rem;
+    margin: 10px 0;
+    line-height: 1.4;
+  }
+
+  .product-title a{
+    color: #333;
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .product-title a:hover{
+    color: #28a745;
+  }
+  
+  .product-price{
+    margin: 12px 0;
+  }
+
+  .sale-price{
+    font-size: 1.2rem;
+    color: #28a745;
+    font-weight: 600;
+  }
+
+  .regular-price {
+    color: #999;
+    text-decoration: line-through;
+    margin-left: 10px;
+    font-size: 0.9rem;
+}
+
+.product-description {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 0;
+    display: -webkit-box;
+    /*-webkit-line-clamp: 2;*/
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+  /* .product-cart-wrap {
       border: 1px solid #eee;
       padding: 20px;
       margin-bottom: 30px;
-  }
+  } */
 
-
-  .product-content-wrap h6 {
+  /* .product-content-wrap h6 {
       font-size: 18px;
       color: #333;
       margin-bottom: 5px;
@@ -154,7 +263,7 @@
 
   .product-content-wrap a:hover {
       background-color: #ff4c4c;
-  }
+  } */
 
     </style>
 
@@ -206,14 +315,14 @@
             </div>
         </div>
     </section>-->
-    <div class="hero-section">
+    <section class="hero-section">
         <div class="hero-overlay"></div>
         <div class="hero-content">
           <h1 class="hero-title text-white">Break Your<br>Limits</h1>
           <p class="hero-subtitle text-warning" >Push boundaries with our latest collection of performance footwear. Engineered for those who demand greatness.</p>
           <a href="/shop" class="hero-cta">Shop Collection</a>
         </div>
-      </div>
+    </section>
     <!-- Hero Section End -->
 
     <!-- Banner Section Begin -->
@@ -265,7 +374,7 @@
     
             <!-- Flex container for logos -->
             <div class="d-flex justify-content-between align-items-center">
-              <!-- Adidas -->
+              <!-- club1 -->
               <div class="bg-light rounded-circle p-3">
                 <img
                   alt="Adidas logo"
@@ -276,7 +385,7 @@
                 />
               </div>
     
-              <!-- Nike -->
+              <!-- club2 -->
               <div class="bg-light rounded-circle p-3">
                 <img
                   alt="Nike logo"
@@ -287,7 +396,7 @@
                 />
               </div>
     
-              <!-- Jordan -->
+              <!-- club3 -->
               <div class="bg-light rounded-circle p-3">
                 <img
                   alt="Jordan logo"
@@ -298,7 +407,7 @@
                 />
               </div>
     
-              <!-- New Balance -->
+              <!-- club4 -->
               <div class="bg-light rounded-circle p-3">
                 <img
                   alt="New Balance logo"
@@ -324,43 +433,42 @@
                     </ul>
                 </div>
             </div>
-            <div class="row product__filter">
-                <% productData.forEach(product => { %>
-                    <div class="col-lg-3 col-md-4 col-12 col-sm-6">
-                        <div class="product-cart-wrap mb-30">
-                            <div class="product-img-action-wrap">
-                                <div class="product-img product-img-zoom">
-                                    <a href="/productdetails/<%= product._id %>">
-                                        <img 
-                                        class="default-img" 
-                                        src="/uploads/re-images/<%= product.productImage[0] %>" 
-                                        alt="<%= product.productName %>"
-                                        >
-                                        <!--<img 
-                                        class="hover-img" 
-                                        src="/uploads/re-images/product.productImage[1]" 
-                                        alt=""
-                                        >-->
-                                    </a>
-                                </div>
-                                <div class="product-action-1">
-                                    <a aria aria-label="Add to wishlist" href="/add-to-wishlist/<%= product._id %>" class="action-btn hover-up">
-                                        <i class="fas fa-heart"></i>
-                                    </a>
-                                </div>
+            <div class="row product-grid">
+                <% productData.forEach(product =>{ %>
+                    <div class="col-lg-3 col-md-6 col-sm-12 mb-4">
+                        <div class="product-card">
+                            <div class="product-img-wrapper">
+                                <a href="/productdetails/<%= product._id %>">
+                                    <img class="product-img" src="/uploads/re-images/<%= product.productImage[0] %>" alt="<%= product.productName %>">
+                                </a>
+                                    <!--<span class="hot-badge">Hot</span>-->
                                 
+                                <div class="product-action-buttons">
+                                    <form action="/add-to-cart/<%= product._id %>" method="post" class="d-inline">
+                                        <button type="submit" class="action-button cart-button">
+                                            <i class="fa-solid fa-bag-shopping"></i>
+                                        </button>
+                                    </form>
+                                    <form action="/add-to-wishlist/<%= product._id %>" method="post" class="d-inline">
+                                        <button type="submit" class="action-button wishlist-button">
+                                            <i class="fa-regular fa-heart"></i>
+                                        </button>
+                                    </form>
+                                </div>
                             </div>
-      
-      
-                            <div class="product-content-wrap">
-                                <h6><%= product.productName %></h6>
-                                <h5><%= product.salePrice %></h5>
-                                <a href="/addToCart?id=<%= product._id %>">Add to cart</a>
+                            <div class="product-info">
+                                <h3 class="product-title">
+                                    <a href="/products/<%= product._id %>"><%= product.productName %></a>
+                                </h3>
+                                <div class="product-price">
+                                    <span class="sale-price"><%= product.salePrice %></span>
+                                        <span class="regular-price"><strike><%= product.regularPrice %></strike></span>
+                                </div>
+                                <p class="product-description"><%= product.description %>...</p>
                             </div>
                         </div>
                     </div>
-      
-               <% }) %>
+                <% }) %>
             </div>
         </div>
     </section>

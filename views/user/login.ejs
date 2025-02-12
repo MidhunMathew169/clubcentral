@@ -38,6 +38,9 @@
     .btn-green:hover {
         background-color: #218838;
     }
+    .btn-block a{
+        color: aliceblue;
+    }
     .error-message {
         color: red;
         font-size: 0.75rem;
@@ -70,7 +73,7 @@
                         <input type="password" class="form-control" name="password" id="password" placeholder="Enter your password">
                         <span class="toggle-password" onclick="togglePasswordVisibility()">👁</span>
                         </div>
-                        <a href="#" class="d-block mt-2 text-primary">Forgot Password?</a>
+                        <a href="/forgotPassword" class="d-block mt-2 text-primary">Forgot Password?</a>
                     </div>
                     <div id="error" class="error-message"></div>
                     <%if(locals.message && message.length > 0){%>
@@ -78,11 +81,11 @@
                         <%=message%>
                     </div>
                     <%}%>
-                    <button type="submit" class="btn btn-primary btn-block">Continue</button>
+                    <button type="submit" class="btn btn-dark btn-block">Continue</button>
                 </form>
                 <hr>
                 <p class="text-center">New to ClubCentral?</p>
-                <button class="btn btn-green btn-block"><a href="/signup">Create your ClubCentral Account</a></button>
+                <button class="btn btn-success btn-block"><a href="/signup">Create your ClubCentral Account</a></button>
             </div>
         </div>
     </div>

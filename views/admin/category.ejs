@@ -436,17 +436,33 @@
         const offer = document.getElementById('offerId').value;
         try {
         const response = await axios.post('/admin/add-category', {name,description,offer});
-        alert(response.data.message);
+        console.log(response);
         if(response.data.success){
-            window.location.reload();
+            swal.fire({
+                 icon: "success",
+                 title: "Category Added!",
+                 text: response.data.message,
+                 showConfirmButton: false,
+                 timer: 1500
+            }).then(() => {
+                window.location.reload();
+            });
         }
-            console.log(response);
+        else{
+            swal.fire({
+                icon: "error",
+                title: "Error",
+                text: response.data.error || "Something went wrong!",
+            });
+        }
             
         } catch (error) {
            console.log(error);
-           console.log(error.response.data.error);
-           responsemessage.textContent = error.response.data.error;
-              
+           swal.fire({
+            icon: "error",
+            title: "Error",
+            text: error.response?.data?.error || "internal server error"
+           })  
         }
     }
 
@@ -464,16 +480,32 @@
         try {
             console.log('try block');
             const response = await axios.patch(`/admin/edit-category/${id}`, {name,description,offer});
-        
-            console.log(response.data);
+            console.log(response);
             if(response.data.success){
-                window.location.reload();
+                swal.fire({
+                    icon: "success",
+                    title: "Category Edited!",
+                    text: response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(()=> {
+                    window.location.reload();
+                });
             }
             else{
-                console.error(response.data.error);
+               swal.fire({
+                icon: "error",
+                title: "Error",
+                text: response.data.error || "something went wrong!"
+               })
             }
         } catch (error) {
             console.error(error);
+            swal.fire({
+                icon: "error",
+                title: "Error",
+                text: error.response?.data?.error || "internal server error"
+            })
         }
     }
     

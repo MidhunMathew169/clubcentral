@@ -1,6 +1,7 @@
 <!--Header section-->
+<header>
 <%-include("../partials/user/header")%>
-
+</header>
 <style>
     .widget-category {
             background: #fff;
@@ -354,6 +355,7 @@
 
 
 </style>
+<body>
 <div class="row">
 <!--sidebar section-->
 <aside class="col-lg-3 col-md-4 primary-sidebar sticky-sidebar mb-4 ">
@@ -419,7 +421,7 @@
                             <div class="product-action-buttons">
                                 <form action="/add-to-cart/<%= product._id %>" method="post" class="d-inline">
                                     <button type="submit" class="action-button cart-button">
-                                        <i class="fi-rs-shopping-bag-add"></i>
+                                        <i class="fa-solid fa-bag-shopping"></i>
                                     </button>
                                 </form>
                                 <form action="/add-to-wishlist/<%= product._id %>" method="post" class="d-inline">
@@ -463,6 +465,6 @@
         <a href="/shop?page=<%= currentPage + 1 %>" class="next">Next</a>
     <% } %>
 </div>
-
+</body>
 <!--footer section-->
 <%- include("../partials/user/footer") %>

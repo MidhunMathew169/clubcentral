@@ -34,4 +34,5 @@ router.post("/addProducts",adminAuth,uploads.array("images",4),productController
 router.patch("/toggle-product/:id",adminAuth,productController.listProduct);
 router.get("/editProducts/:id",adminAuth,productController.getProductEditPage);
 router.post("/editProducts/:id",adminAuth,uploads.array("images",4),productController.editProduct);
+router.post("/deleteImage",adminAuth,productController.deleteSingleImage);
 module.exports = router;

@@ -2,6 +2,24 @@ const { data } = require("jquery");
 const User = require("../models/userSchema");
 const { error } = require("console");
 
+const sessionValidator = async (req, res, next) => {
+    try {
+        if (req.session.user) {
+            const user = await User.findById(req.session.user._id);
+            
+            if (!user || user.isBlocked) {
+                req.session.destroy();
+                return res.redirect('/login');
+            }
+        }
+        next(); // Continue if guest or unblocked user
+    } catch (error) {
+        console.error("Error in session validation middleware:", error);
+        res.status(500).send("Server error");
+    }
+};
+
+
 const userAuth = async(req,res,next)=>{
     if(req.session.user){
         User.findById(req.session.user._id)
@@ -48,7 +66,8 @@ const adminAuth = async(req,res,next)=>{
 // }
 
 module.exports = {
-    userAuth,
     adminAuth,
+    sessionValidator,
+    userAuth
    // isAuthenticated
 };

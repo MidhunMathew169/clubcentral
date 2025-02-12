@@ -61,7 +61,7 @@ const addProduct = async(req,res)=>{
 
         const productExist = await Product.findOne({ productName });
         if(productExist){
-            return res.send(400).json({error:'product already exist'});
+            return res.json({success:false ,error:'product already exist'});
         }
 
         const uploadImages = [];
@@ -74,7 +74,7 @@ const addProduct = async(req,res)=>{
 
                 const supportedFormats = ['image/jpeg','image/png','image/jpg'];
                 if(!supportedFormats.includes(req.files[i].mimetype)){
-                    return res.status(400).json({error:'unsupported image format'})
+                    return res.json({success:false ,error:'unsupported image format'})
                 }
 
                 try {
@@ -83,7 +83,7 @@ const addProduct = async(req,res)=>{
                     .toFile(rePath);
                 } catch (sharpError) {
                     console.log('Error processing image with Sharp:', sharpError);
-                    return res.status(500).json({error:'Error proccessing image'});
+                    return res.json({success:false ,error:'Error proccessing image'});
                 }
 
                 uploadImages.push(resizedFilename);
@@ -92,7 +92,7 @@ const addProduct = async(req,res)=>{
 
         const categoryData = await Category.findById(category);
         if(!categoryData){
-            return res.status(404).json({error:'category not found'});
+            return res.status(404).json({success:false ,error:'category not found'});
         }
 
         //process sizes and quantities
@@ -119,11 +119,12 @@ const addProduct = async(req,res)=>{
         });
 
         await newProduct.save();
-        return res.redirect('/admin/products');
+        //return res.redirect('/admin/products');
+        return res.json({success: true ,message:"Product Added Successfully" })
     } 
     catch (error) {
         console.log('Error saving products',error);
-        return res.status(500).json({ error : 'An error occurred while saving the product'})
+        return res.json({success:false , error : "An error occurred while saving the product"})
     }
 };
 
@@ -157,25 +158,7 @@ const editProduct = async (req,res) => {
         const {productName,description,regularPrice,salePrice,category,fitType,sleeve} = req.body;
         console.log(req.body);
 
-        //Process sizes and quantities
-        // const sizeInputs = {
-        //     S: isNaN(Number(req.body.sizeS)) ? 0 : Number(req.body.sizeS),
-        //     M: isNaN(Number(req.body.sizeM)) ? 0 : Number(req.body.sizeM),
-        //     L: isNaN(Number(req.body.sizeL)) ? 0 : Number(req.body.sizeL),
-        //     XL: isNaN(Number(req.body.sizeXL)) ? 0 : Number(req.body.sizeXL),
-        //     XXL: isNaN(Number(req.body.sizeXXL)) ? 0 : Number(req.body.sizeXXL)
-        // };
-        // let updatedSizes = product.sizes.map(existingSize => {
-        //     return sizeInputs[existingSize.size] !== undefined
-        //         ? { size: existingSize.size, quantity: sizeInputs[existingSize.size] }
-        //         : existingSize; // Keep existing value if not in request
-        // });
-
-        // Object.keys(sizeInputs).forEach(size => {
-        //     if (!updatedSizes.some(existingSize => existingSize.size === size)) {
-        //         updatedSizes.push({ size, quantity: sizeInputs[size] });
-        //     }
-        // });
+    
         const sizes = [
             { size: 'S', quantity: Number(req.body.sizeS) || 0 },
             { size: 'M', quantity: Number(req.body.sizeM) || 0 },
@@ -248,6 +231,27 @@ const editProduct = async (req,res) => {
     }
 };
 
+const deleteSingleImage = async (req,res) => {
+    try {
+        const {imageNameToServer,productIdToServer} = req.body;
+        console.log('req.boy:',req.body);
+        const product = await Product.findByIdAndUpdate(productIdToServer,{$pull:{productImage:imageNameToServer}},{new:true});
+        const imagePath = path.join('public','uploads','re-images',imageNameToServer);
+
+        if(fs.existsSync(imagePath)){
+           await fs.unlinkSync(imagePath);
+           console.log(`image ${imageNameToServer} deleted successfully`);
+        }
+        else{
+            console.log(`image ${imageNameToServer} not found in the files`);
+        }
+        res.send({status:true});
+    } catch (error) {
+        console.log('error while deleteing image');
+        res.json({success:false,message:'error while deleting image'});
+    }
+}
+
 const listProduct = async (req, res) => {
     console.log('listProduct');
     try {
@@ -278,5 +282,6 @@ module.exports = {
     addProduct,
     getProductEditPage,
     editProduct,
+    deleteSingleImage,
     listProduct
 }

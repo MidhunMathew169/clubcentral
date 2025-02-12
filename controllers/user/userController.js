@@ -130,6 +130,7 @@ const verifyOtp = async(req,res)=>{
 
             await saveUserData.save();
             req.session.user = saveUserData._id;
+            console.log('session user set to:',req.session.user);
             res.json({success:true,redirectUrl:"/",message:"user created successfully"});
             //res.render("user/home");
         }
@@ -154,31 +155,39 @@ const verifyOtp = async(req,res)=>{
 
 const loadHomepage = async(req,res)=>{
     try {
+        console.log('home page triggered');
         const user = req.session.user;
-        //console.log('session:',req.session);
-        console.log('Session User:', req.session.user);
+        console.log('session:',req.session);
+        //console.log('Session User:', req.session.user);
         console.log('user in teioweof:',user);
         
         const categories = await Category.find({isListed:true});
         let productData = await Product.find({
             isListed:true,
             category:{$in:categories.map(category=>category._id)},
-            //quantity:{$gt:0}
+            
         })
         console.log('productData is:',productData)
         productData.sort((a,b)=> new Date(b.createdAt) - new Date(a.createdAt));
-        productData = productData.slice(0,4);
+        productData = productData.slice(0,8);
 
         if(user){
-            const userData = await User.findOne({user:user._id});
+            const userData = await User.findById(user);
+            
             console.log('User Data:', userData);
-            //const name = userData.firstname;
-            //console.log(name)
-            res.render("user/home",{user:userData.firstname,isLoggedIn:true,productData});
+            res.render("user/home",{
+                user:userData.firstname,
+                isLoggedIn:true,
+                productData:productData
+            });
 
         }
         else{
-            return res.render("user/home",{user:false,isLoggedIn:false,productData});
+            return res.render("user/home",{
+                user:false,
+                isLoggedIn:false,
+                productData:productData
+            });
         }
     } catch (error) {
         console.log('home page not found');
@@ -205,7 +214,7 @@ const login = async(req,res)=>{
         console.log('request-body',req.body);
 
         const findUser = await User.findOne({email});
-        console.log('findUser',email);
+        console.log('findUser',findUser);
         console.log('findUser name:',findUser.firstname);
         if(!findUser){
             return res.render('user/login',{message:"user not found"});
@@ -219,20 +228,31 @@ const login = async(req,res)=>{
         if(!passwordMatch){
             return res.render('user/login',{message:"invalid email or password"});
         }
-        req.session.userId = findUser._id;
-        console.log(req.session.userId)
+        req.session.user = findUser;
+        console.log('userid is:',req.session.userId);
+        console.log('req.session',req.session);
 
         await req.session.save((err)=>{
             if(err){
                 return res.redirect('user/login');
             }
-            res.render('user/home',{user:findUser.firstname});
+            res.redirect('/');
         })
 
     } 
     catch (error) {
         console.error("error in login:",error);
         res.render('user/login',{message:"login failed"});
+    }
+}
+
+const forgotPassW = async (req,res) => {
+    try {
+        console.log('forgot pw page triggered');
+        return res.render('user/forgot-password');
+    } catch (error) {
+        console.log('forgot password page is not found');
+        res.status(500).send('server error');
     }
 }
 const logout = async (req,res) => {
@@ -302,6 +322,7 @@ module.exports = {
     loadHomepage,
     loadLogin,
     login,
+    forgotPassW,
     logout,
     loadShoppingPage,
     pageNotFound

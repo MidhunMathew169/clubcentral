@@ -21,7 +21,6 @@ app.use(session({
         maxAge : 1000*60*60*24
     }
 }));
-
 app.use(express.json());
 app.use(express.urlencoded({extended:true}));
 app.use(passport.initialize());
@@ -32,6 +31,7 @@ app.use(expressLayouts)
 app.set("views",path.join(__dirname,'views'));
 app.set('layout','layouts/layout');
 app.use(express.static(path.join(__dirname,"public")));
+app.use('/uploads/re-images',express.static('public/uploads/re-images'));
 //app.use(express.static("public"));
 app.use(nocache())
  app.use("/",userRouter);
