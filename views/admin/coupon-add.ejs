@@ -1,0 +1,184 @@
+<style>
+    .flex-h-screen {
+        display: flex;
+        min-height: 100vh;
+    }
+    .flex-1 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+    .select-wrapper {
+        position: relative;
+    }
+    .select-wrapper select {
+        appearance: none;
+        border: 2px solid black;
+        border-radius: 4px;
+        padding-left: 8px;
+        background: transparent;
+        content: '▼';
+        position: absolute;
+    }
+</style>
+<div class="flex-h-screen">
+    <%- include('../partials/admin/side bar') %>
+    <div class="flex-1">
+        <%- include('../partials/admin/header') %>
+        <div class="col-lg-12 col-md-8 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">Coupons</h2>
+            </div>
+            
+            <div class="bg-white p-4 rounded shadow-sm">
+                <h3 class="fs-4 fw-bold mb-3">Add coupon</h3>
+                <form id="couponForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Coupon Name :</label>
+                            <input type="text" class="form-control" name="couponName" id="" placeholder="Enter coupon name">
+                            <div id="coupon_code-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Coupon Code :</label>
+                            <input type="text" class="form-control" name="code" id="couponCode" required>
+                            <button type="button" id="generateCoupon" class="generate-btn">
+                                <i class="fas fa-sync-alt"></i> Generate
+                            </button>
+                            <div id="coupon_code-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Start date :</label>
+                            <input type="date" class="form-control" name="startedOn" id="" placeholder="DD-MM-YYYY">
+                            <div id="coupon_startedOn-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Expiry Date :</label>
+                            <input type="date" class="form-control" name="expireOn" id="" placeholder="DD-MM-YYYY">
+                            <div id="coupon_expireOn-error" class="error-message"></div>
+                        </div>
+                       
+                        <div class="col-md-6">
+                            <label class="form-label">Discount :</label>
+                            <input type="text" class="form-control" name="discount" id="" placeholder="Enter discount">
+                            <div id="coupon_discount-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Max Discount :</label>
+                            <input type="text" class="form-control" name="maxDiscount" id="" placeholder="Enter discount">
+                            <div id="coupon_discount-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Limit :</label>
+                            <input type="text" class="form-control" name="limit" id="" placeholder="Enter limit">
+                            <div id="coupon_limit-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Min Purchase :</label>
+                            <input type="text" class="form-control" name="minPurchase" id="" placeholder="Enter min purchase">
+                            <div id="coupon_minPurchase-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Per User Limit :</label>
+                            <input type="text" class="form-control" name="userLimit" id="" placeholder="Enter per user limit">
+                            <div id="coupon_userLimit-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Description :</label>
+                            <textarea class="form-control" name="description" id="" placeholder="Product description"></textarea>
+                            <div id="coupon_code-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6 d-flex">
+                            <label class="form-label">Discount Type:</label>
+                            <div class="select-wrapper">
+                            <select id="discountType" name="discountType" required>
+                                <option value="" disabled selected>Select Type</option>
+                                <option value="percentage">Percentage</option>
+                                <option value="fixed">Fixed Amount</option>
+                            </select>
+                            </div>
+                            <div id="coupon_discount-error" class="error-message"></div>
+                        </div>
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-dark w-100">Add Coupon</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById("couponForm").addEventListener("submit",async function(event){
+        event.preventDefault();
+
+        const couponName = document.getElementsByName('couponName')[0].value || '';
+        const code = document.getElementsByName('code')[0].value || '';
+        const minPurchase = document.getElementsByName('minPurchase')[0].value || '';
+        const limit = document.getElementsByName('limit')[0].value || '';
+        const userLimit = document.getElementsByName('userLimit')[0].value || '';   
+        const startedOn = document.getElementsByName('startedOn')[0].value || '';
+        const expireOn = document.getElementsByName('expireOn')[0].value || '';
+        const discount = document.getElementsByName('discount')[0].value || '';
+        const maxDiscount = document.getElementsByName('maxDiscount')[0].value || '';
+        const discountType = document.getElementsByName('discountType')[0].value || '';
+        const description = document.getElementsByName('description')[0].value || '';
+
+        try {
+            const response = await axios.post("/admin/addCoupon",{
+                couponName,
+                code,
+                minPurchase,
+                limit,
+                userLimit,
+                startedOn,
+                expireOn,
+                discount,
+                maxDiscount,
+                discountType,
+                description
+            });
+
+            if(response.data.success){
+                swal.fire({
+                    icon: 'success',
+                    title: 'Coupon added successfully',
+                    text: response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500
+                }).then(()=>{
+                    window.location.href = '/admin/coupons';
+                })
+            }
+            else{
+                swal.fire({
+                    icon: 'error',
+                    title: 'Failed to add coupon',
+                    text: response.data.message
+                })
+            }
+        } catch (error) {
+            swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Failed to add coupon',
+                confirmButtonText: 'Ok'
+            })
+        }
+    });
+</script>
+<script>
+    function generateRandomCoupon(){
+        const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+        let couponCode = '';
+        for (let i = 0; i < 6; i++) {
+            couponCode += characters.charAt(Math.floor(Math.random() * characters.length));
+        }
+        return couponCode;
+    }
+document.getElementById('generateCoupon').addEventListener('click',function() {
+    document.getElementById('couponCode').value = generateRandomCoupon();
+})
+</script>

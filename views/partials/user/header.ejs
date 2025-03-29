@@ -1,6 +1,6 @@
     <title>ClubCentral</title>
     <link rel="stylesheet" href="css/style.css" type="text/css">
-    <!-- Page Preloder -->
+   
     <div id="preloder">
         <div class="loader"></div>
     </div>
@@ -44,8 +44,8 @@
         .dropdown:hover .dropdown-content {
             display: block;
         }
-        .parent-content{
-            /* display: flex; */
+        .parent-content {
+            display: flex;
             width: 100%;
             background-color: #f1f1f1;
             justify-content: space-evenly;
@@ -54,80 +54,162 @@
             top: 0;
             z-index: 100;
         }
-        .row{
-            display: flex;
-            align-items:center;
-            justify-content: space-around;
-        }
-        .header__menu{
-            width: 680px;
+
+        .row {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            gap: 2rem;
+            justify-content: space-around;
+            width: 100%;
         }
-        .brand-logo{
+
+        .header__logo {
+            display: flex;
+            align-items: center;
+        }
+
+        .brand-logo {
             font-size: 1.8rem;
             font-weight: 700;
             color: var(--primary);
             text-decoration: none;
             letter-spacing: -0.5px;
-            flex-shrink: 0;
-            position: relative;
-            padding: 0.5rem 0;
+            transition: color 0.3s ease;
         }
-        .search-inp{
-            flex: 1;
-            max-width: 300px;
-            position: relative;
-            margin: 0 2rem;
+
+        .brand-logo:hover {
+            color: white;
         }
-        .search-form{
-            position: relative;
-            width: 100%;
+
+        .header__menu {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            gap: 2rem;
+            flex-grow: 1;
+        }
+
+        .header__menu ul {
+            display: flex;
+            align-items: center;
+            gap: 1.5rem;
+            margin: 0;
+            padding: 0;
+            list-style: none;
+        }
+
+        .header__menu ul li {
             display: flex;
             align-items: center;
         }
-        .search-input{
+
+        .search-inp {
+            display: flex;
+            align-items: center;
+            margin-left: 1.5rem;
+            flex-grow: 1;
+            max-width: 300px;
+        }
+
+        .search-form {
+            display: flex;
+            align-items: center;
             width: 100%;
-            height: 48px;
-            padding: 0.9rem 1.2rem;
-            padding-right: 50px;
-            border: 2px solid transparent;
-            border-radius: 16px;
-            background: var(--bg-light);
-            font-size: 0.95rem;
-            color: var(--text);
+            position: relative;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            border: 1.5px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            outline: none;
             transition: all 0.3s ease;
         }
-        .search-input::placeholder{
-            color: var(--text-light);
-            transition: color 0.3s ease;
-        }
-        .search-input:focus::placeholder{
-            color: transparent;
-        }
-        .search-input:focus{
-            outline: none;
+
+        .search-input:focus {
             border-color: var(--primary);
-            background: white;
             box-shadow: 0 0 0 4px rgba(0,135,138,0.1);
         }
-        .search-btn{
+
+        .search-btn {
             position: absolute;
-            right: 6px;
-            background: var(--primary);
+            right: 5px;
+            background: none;
             border: none;
-            width: 36px;
-            height: 36px;
-            border-radius: 12px;
-            color:black;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.9rem;
+            color: #888;
+            transition: color 0.3s ease;
+        }
+
+        .search-btn:hover {
+            color: var(--primary);
+        }
+
+        .search-btn i {
+            font-size: 1rem;
+        }
+
+        .mx-auto {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .mx-auto a {
+            text-decoration: none;
+            color: black;
+            transition: color 0.3s ease;
+        }
+
+        .mx-auto a:hover {
+            color: black;
+            text-decoration: none;
+        }
+
+        .header__nav__option {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-left: 1rem;
+        }
+
+        .header__nav__option a {
+            position: relative;
+        }
+
+        .header__nav__option span {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background-color: red;
+            color: white;
+            border-radius: 50%;
+            padding: 2px 6px;
+            font-size: 0.7rem;
+        }
+
+        @media (max-width: 992px) {
+            .header__menu {
+                flex-direction: column;
+            }
+
+            .row {
+                flex-direction: column;
+            }
+
+            .mx-auto {
+                margin-top: 1rem;
+            }
+
+            .search-inp {
+                margin-left: 0;
+                margin-top: 1rem;
+                width: 100%;
+            }
         }
     </style>
     <!-- Header Section Begin -->
@@ -152,7 +234,7 @@
                             <form action="/search" method="GET" class="search-form">
                                 <input 
                                     type="search" 
-                                    name="q" 
+                                    name="search" 
                                     class="search-input" 
                                     placeholder="Search for products..." 
                                     autocomplete="off"
@@ -179,8 +261,8 @@
                                 <% } %>
                     </div>
                     <div class="header__nav__option d-flex">
-                        <a href="#"><img src="img/icon/heart.png" alt=""></a>
-                        <a href="#"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
+                        <a href="/wishlist"><img src="img/icon/heart.png" alt=""></a>
+                        <a href="/cart"><img src="img/icon/cart.png" alt=""> <span>0</span></a>
                         <div class="price"></div>
                     </div>
                 </div>
@@ -192,6 +274,18 @@
         </div>
 
         <script>
-            console.log(user.firstname)
+            //console.log(user.firstname)
         </script>
-    
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const loginSignupContainer = document.querySelector('.mx-auto');
+                
+                // Ensure login and signup buttons are in the same line with proper spacing
+                if (loginSignupContainer) {
+                    loginSignupContainer.style.display = 'flex';
+                    loginSignupContainer.style.alignItems = 'center';
+                    loginSignupContainer.style.gap = '1rem';
+                }
+            });
+        </script>

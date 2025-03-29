@@ -1,0 +1,123 @@
+<style>
+    .flex-h-screen {
+        display: flex;
+        min-height: 100vh;
+    }
+    .flex-1 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+</style>
+<div class="flex-h-screen">
+    <%- include('../partials/admin/side bar') %>
+    <div class="flex-1">
+        <%- include('../partials/admin/header') %>
+        <div class="col-lg-12 col-md-8 p-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h2 class="fw-bold">Coupons</h2>
+            </div>
+            
+            <div class="bg-white p-4 rounded shadow-sm">
+                <h3 class="fs-4 fw-bold mb-3">Add coupon</h3>
+                <form id="editCouponForm">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label">Coupon Name :</label>
+                            <input type="text" class="form-control" name="name" id="couponCodeId" value="<%= coupon.couponName %>">
+                            <div id="coupon_code-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Coupon Code :</label>
+                            <input type="text" class="form-control" name="code" id="couponCodeId" value="<%= coupon.code %>">
+                            <div id="coupon_code-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Start date :</label>
+                            <input type="date" class="form-control" name="startedOn" id="startId" value="<%= coupon.startedOn.toISOString().split('T')[0] %>">
+                            <div id="coupon_startedOn-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Expiry Date :</label>
+                            <input type="date" class="form-control" name="expireOn" id="expireId" value="<%= coupon.expireOn.toISOString().split('T')[0] %>">
+                            <div id="coupon_expireOn-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Discount :</label>
+                            <input type="text" class="form-control" name="discount" id="discountId" value="<%= coupon.discount %>">
+                            <div id="coupon_discount-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Limit :</label>
+                            <input type="text" class="form-control" name="limit" id="limitId" value="<%= coupon.limit %>">
+                            <div id="coupon_limit-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Min Purchase :</label>
+                            <input type="text" class="form-control" name="minPurchase" id="minPurchaseId" value="<%= coupon.minPurchase %>">
+                            <div id="coupon_minPurchase-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Per User Limit :</label>
+                            <input type="text" class="form-control" name="userLimit" id="userLimitId" value="<%= coupon.userLimit %>">
+                            <div id="coupon_userLimit-error" class="error-message"></div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label">Description :</label>
+                            <textarea class="form-control" name="description" id="descriptionId" value="<%= coupon.description %>"></textarea>
+                            <div id="coupon_code-error" class="error-message"></div>
+                        </div>
+                        <div class="col-12 d-flex">
+                            <button type="submit" class="btn btn-dark w-50" onclick="submitCouponForm()">Update</button>
+                            <button type="submit" class="btn btn-light w-50" onclick="history.back()">Cancel</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function submitCouponForm(){
+        const form = document.getElementById("editCouponForm");
+        const formData = Object.fromEntries(new FormData(form).entries());
+        console.log('coupon info:',formData);
+
+        try {
+            const response = await axios.patch('/admin/editCoupon/<%= coupon._id %>', formData,{
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+
+            if(response.data.success){
+                console.log('coupon updated successfully');
+                swal.fire({
+                    icon: 'success',
+                    title: 'Coupon updated successfully',
+                    text: 'Coupon has been updated successfully',
+                    showConfirmButton: false,
+                    timer: 3000
+                });
+                    location.href = '/admin/coupons';
+            }
+            else{
+                console.log('failed to update coupon:',response.data.message);
+                swal.fire({
+                    icon: 'error',
+                    title: 'Failed to update coupon',
+                    text: response.data.message,
+                    confirmButtonText: 'OK'
+                })
+            }
+        } catch (error) {
+            swal.fire({
+                icon: 'error',
+                title: 'failed to update coupon',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+</script>

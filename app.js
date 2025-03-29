@@ -5,6 +5,7 @@ const env = require("dotenv").config();
 const passport = require("./config/passport");
 const session = require("express-session");
 const db = require("./config/db");
+const Razorpay = require("razorpay");
 const userRouter = require("./routes/userRouter");
 const adminRouter = require("./routes/adminRouter");
 const expressLayouts=require('express-ejs-layouts');

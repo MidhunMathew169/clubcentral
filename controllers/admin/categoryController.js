@@ -34,7 +34,7 @@ const categoryInfo = async (req,res)=>{
 }
 
 const addCategory = async (req,res)=>{
-    const {name,description,offer} = req.body;
+    const {name,description} = req.body;
     const trimmedName = name.trim();
     if(!name || !description){
         return res.status(400).json({success:false,error:'All fields are required'});
@@ -45,7 +45,7 @@ const addCategory = async (req,res)=>{
             console.log("work");
             return res.status(400).json({success:false,error:'Category already exists'});
         }
-        const newCategory = new Category({name,description,offer});
+        const newCategory = new Category({name,description});
         await newCategory.save();
         return res.status(201).json({success:true,message:'Category added successfully'});
         
@@ -60,7 +60,7 @@ const editCategory = async (req,res)=>{
     try {
         const categoryId = req.params.id;
         console.log(categoryId)
-        const {name,description,offer} = req.body;
+        const {name,description} = req.body;
         const trimmedName = name.trim();
         const existingCategory = await Category.findOne({name:{$regex:`^${trimmedName}$`,$options:'i'}});
 
@@ -69,8 +69,7 @@ const editCategory = async (req,res)=>{
         }
         const UpdateCategory = await Category.findByIdAndUpdate(categoryId,{
             name :name,
-            description : description,
-            offer : offer
+            description : description
         },{new:true});
         
         if(!UpdateCategory){

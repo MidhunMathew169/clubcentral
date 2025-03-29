@@ -365,7 +365,12 @@
         
         <ul class="categories">
             <% category.forEach(cat => { %>
-                    <li><a href=""><%= cat.name %></a></li>
+                    <li>
+                        <a href="/shop?category=<%= cat.name %>&sort=<%= sortOption %>&search=<%= searchQuery %>&page=1"
+                            class="<%= categoryFilter === cat.name ? 'active' : '' %>">
+                            <%= cat.name %>
+                        </a>
+                    </li>
              <% }) %>       
         </ul>
     </div>
@@ -393,10 +398,10 @@
                     </div>
                             <div class="sort-by-dropdown">
                                 <ul>
-                                  <li><a href="#">A to Z</a></li>
-                                  <li><a href="#">Price: Low to High</a></li>
-                                  <li><a href="#">Price: High to Low</a></li>
-                                  <li><a href="#">Z to A</a></li>
+                                  <li><a class="<%= sortOption === 'aToZ' ? 'active' : '' %>" href="/shop?sort=aToZ&search=<%= searchQuery %>&category=<%= categoryFilter %>&page=<%= currentPage %>" >A to Z</a></li>
+                                  <li><a class="<%= sortOption === 'lowToHigh' ? 'active' : '' %>" href="/shop?sort=lowToHigh&search=<%= searchQuery %>&category=<%= categoryFilter %>&page=<%= currentPage %>" >Price: Low to High</a></li>
+                                  <li><a class="<%= sortOption === 'highToLow' ? 'active' : '' %>" href="/shop?sort=highToLow&search=<%= searchQuery %>&category=<%= categoryFilter %>&page=<%= currentPage %>" >Price: High to Low</a></li>
+                                  <li><a class="<%= sortOption === 'zToA' ? 'active' : '' %>" href="/shop?sort=zToA&search=<%= searchQuery %>&category=<%= categoryFilter %>&page=<%= currentPage %>" >Z to A</a></li>
                                 </ul>
                               </div>
                      
@@ -432,13 +437,13 @@
                             </div>
                         </div>
                         <div class="product-info">
-                            <span class="product-category"><%= category.name %></span>
+                            <span class="product-category"><%= product.category.name %></span>
                             <h3 class="product-title">
                                 <a href="/products/<%= product._id %>"><%= product.productName %></a>
                             </h3>
                             <div class="product-price">
-                                <span class="sale-price"><%= product.salePrice %></span>
-                                    <span class="regular-price"><strike><%= product.regularPrice %></strike></span>
+                                <span class="sale-price">₹<%= product.salePrice %></span>
+                                    <span class="regular-price">₹<strike><%= product.regularPrice %></strike></span>
                             </div>
                             <p class="product-description"><%= product.description %>...</p>
                         </div>
@@ -452,19 +457,48 @@
 <!--pagination-->
 <div class="pagination">
     <% if (currentPage > 1) { %>
-        <a href="/shop?page=<%= currentPage - 1 %>" class="prev">Previous</a>
+        <a href="?sort=<%= sortOption %>&page=<%= currentPage - 1 %>&category=<%= categoryFilter %><% if(searchQuery){ %>&search=<%= searchQuery %><% } %>" class="prev">Previous</a>
     <% } %>
 
     <% for (let i = 1; i <= totalPages; i++) { %>
-        <a href="/shop?page=<%= i %>" class="page <%= i === currentPage ? 'active' : '' %>">
+        <a href="?sort=<%= sortOption %>&page=<%= i %>&category=<%= categoryFilter %><% if(searchQuery){ %>&search=<%= searchQuery %><% } %>" class="page <%= i === currentPage ? 'active' : '' %>">
             <%= i %>
         </a>
     <% } %>
 
     <% if (currentPage < totalPages) { %>
-        <a href="/shop?page=<%= currentPage + 1 %>" class="next">Next</a>
+        <a href="?sort=<%= sortOption %>&page=<%= currentPage + 1 %>&category=<%= categoryFilter %><% if(searchQuery){ %>&search=<%= searchQuery %><% } %>" class="next">Next</a>
     <% } %>
 </div>
 </body>
 <!--footer section-->
 <%- include("../partials/user/footer") %>
+
+<!-- <script>
+    document.querySelectorAll('.sort-by-dropdown li a').forEach(item => {
+        item.addEventListener('click', function(event){
+            event.preventDefault();
+            const sortType = this.getAttribute('data-sort');
+
+            // update the displayed sort option
+            document.querySelector('.selected-sort').textContent = this.textContent;
+
+            axios.get(`/products?sort=${sortType}`)
+            .then(response => {
+                const productContainer = document.querySelector('#product-list');
+                productContainer.innerHTML = '';
+
+                response.data.forEach(product => {
+                    productContainer.innerHTML += `
+                    <div class = "product-card">
+                        <h3>${product.name}</h3>
+                        <p>Price: $${product.price}</p>
+                        </div>`
+                });
+            })
+            .catch(error => {
+                console.error('Error fetching data',error);
+            })
+        })
+    })
+</script> -->

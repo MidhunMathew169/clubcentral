@@ -1,0 +1,354 @@
+<title>Sales Report</title>
+
+<style>
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination a {
+        padding: 8px 12px;
+        margin: 0 5px;
+        text-decoration: none;
+        color: #333;
+        background: #f1f1f1;
+        border-radius: 5px;
+    }
+
+    .pagination a.active {
+        background: #007bff;
+        color: white;
+    }
+
+    .pagination a:hover {
+        background: #0056b3;
+        color: white;
+    }
+</style>
+<div class="flex-h-screen">
+
+    <div class="flex-1">
+        <!--header section-->
+        <%- include('../partials/admin/header') %>
+        <div class="main-content">
+            <div class="header-section d-flex justify-content-between align-items-center mb-4 border-bottom pb-3">
+                <h2 class="m-0 fw-bold">Sales Report</h2>
+                <div class="d-flex gap-2 mt-2">
+                    <button class="btn btn-dark" onclick="downloadExcel()">
+                        <i class="fas fa-file-excel me-1"></i>Export Excel
+                    </button>
+                    <button class="btn btn-dark" onclick="downloadPDF()">
+                        <i class="fas fa-file-pdf me-1"></i>Export PDF
+                    </button>
+                </div>
+            </div>
+            <!--filter section-->
+         <div class="filter-section bg-light p-3 rounded mb-4 shadow-sm">
+                <form action="/admin/sales-report" method="GET" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="filter" class="form-label fw-bold">Report Type</label>
+                        <select name="filter" id="filter" class="form-select" onchange="toggleCustomDateRange()">
+                            <option value="daily" <%= filter === 'daily' ? 'selected' : '' %>>Daily</option>
+                            <option value="weekly" <%= filter === 'weekly' ? 'selected' : '' %>>Weekly</option>
+                            <option value="monthly" <%= filter === 'monthly' ? 'selected' : '' %>>Monthly</option>
+                            <option value="yearly" <%= filter === 'yearly' ? 'selected' : '' %>>Yearly</option>
+                            <option value="custom" <%= filter === 'custom' ? 'selected' : '' %>>Custom Range</option>
+                        </select>
+                    </div>
+                
+                    <div class="col-md-3 custom-date-range <%= filter === 'custom' ? 'show' : 'd-none' %>">
+                        <label class="form-label fw-bold">Start Date</label>
+                        <input type="date" class="form-control" id="startDate" name="startDate" value="<%= startDate %>">
+                    </div>
+                    <div class="col-md-3 custom-date-range <%= filter === 'custom' ? 'show' : 'd-none' %>">
+                        <label class="form-label fw-bold">End Date</label>
+                        <input type="date" class="form-control" id="endDate" name="endDate" value="<%= endDate %>">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Sales summary with centered cards and improved styling -->
+            <div class="sales-data mb-4" id="salesReportContent">
+                <h3 class="mb-3 border-bottom pb-2 fw-bold">Sales Summary</h3>
+                <div class="row justify-content-center mx-2">
+                    <div class="col-md-4 col-lg-3 mb-3">
+                        <div class="card text-white bg-info shadow h-100 hover-scale">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="summary-card">
+                                        <h6 class="mb-0 text-white-50">Total Orders</h6>
+                                        <h2 class="mb-0 fw-bold"><%= overallSalesCount || 0 %></h2>
+                                    </div>
+                                    <div class="rounded-circle bg-white p-3 d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-shopping-cart text-info fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-3 mb-3">
+                        <div class="card text-white bg-success shadow h-100 hover-scale">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="summary-card">
+                                        <h6 class="mb-0 text-white-50">Total Amount</h6>
+                                        <h2 class="mb-0 fw-bold">&#8377;<%= overallOrderAmount ? overallOrderAmount.toFixed(2) : '0.00' %></h2>
+                                    </div>
+                                    <div class="rounded-circle bg-white p-3 d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-rupee-sign text-success fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-lg-3 mb-3">
+                        <div class="card text-white bg-warning shadow h-100 hover-scale">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div class="summary-card">
+                                        <h6 class="mb-0 text-white-50">Total Discount</h6>
+                                        <h2 class="mb-0 fw-bold">&#8377;<%= overallDiscount ? overallDiscount.toFixed(2) : '0.00'%></h2>
+                                    </div>
+                                    <div class="rounded-circle bg-white p-3 d-flex align-items-center justify-content-center">
+                                        <i class="fas fa-tags text-warning fa-2x"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Table with improved styling -->
+            <div class="table-responsive bg-white rounded shadow-sm">
+                <table class="table table-hover">
+                    <thead class="table-dark">
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Date</th>
+                            <th>Customer</th>
+                            <th>Product</th>
+                            <th>Amount</th>
+                            <th>Discount</th>
+                            <th>Final Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% if (orders && orders.length > 0) { %>
+                            <% orders.forEach(order => { %>
+                        <tr data-order-id="<%= order._id %>" class="align-middle">
+                            <td class="fw-bold"><%= order.orderId %></td>
+                            <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
+                            <td><%= order.userId.firstname %> <%= order.userId.lastname %></td>
+                            <td><%= order.items.product %></td>
+                            <td class="text-muted">₹<%= order.totalPrice %></td>
+                            <td class="text-danger">₹<%= order.discount %></td>
+                            <td class="fw-bold">₹<%= order.finalAmount %></td>
+                        </tr>
+                        <% }); %>
+                        <% } else { %>
+                            <tr>
+                                <td colspan="7" class="text-center py-5">
+                                    <div class="empty-state d-flex flex-column align-items-center justify-content-center p-4">
+                                        <i class="fas fa-box-open fa-4x text-muted mb-3"></i>
+                                        <p class="lead">No orders found for the selected date range</p>
+                                        <small class="text-muted">Try changing your filter criteria</small>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% } %>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Add some custom styles -->
+            <style>
+                .hover-scale {
+                    transition: transform 0.2s ease;
+                }
+                .hover-scale:hover {
+                    transform: scale(1.03);
+                }
+                .table-responsive {
+                    border-radius: 0.25rem;
+                    overflow: hidden;
+                }
+                .table th, .table td {
+                    padding: 0.75rem 1rem;
+                }
+                .table tbody tr {
+                    border-bottom: 1px solid #f0f0f0;
+                }
+                .custom-date-range.d-none {
+                    display: none !important;
+                }
+                .custom-date-range.show {
+                    display: block !important;
+                }
+            </style>
+
+            <!-- Add JavaScript for toggling custom date range -->
+            <script>
+                function toggleCustomDateRange() {
+                    const filterValue = document.getElementById('filter').value;
+                    const customDateRanges = document.querySelectorAll('.custom-date-range');
+                    
+                    customDateRanges.forEach(element => {
+                        if (filterValue === 'custom') {
+                            element.classList.remove('d-none');
+                            element.classList.add('show');
+                        } else {
+                            element.classList.remove('show');
+                            element.classList.add('d-none');
+                        }
+                    });
+                }
+            </script>
+        </div>
+        <div class="container mt-3">
+            <div class="pagination">
+                <% if(currentPage > 1){ %>
+                    <a href="?page=<%= currentPage - 1 %><%= filter ? '&filter='+filter : '' %><%= startDate ? '&startDate='+startDate : '' %><%= endDate ? '&endDate='+endDate : '' %>" class="prev">&laquo; Previous</a>
+                <% } %>
+
+                <% for(let i=1; i<=totalPages; i++){ %>
+                    <a href="?page=<%= i %><%= filter ? '&filter='+filter : '' %><%= startDate ? '&startDate='+startDate : '' %><%= endDate ? '&endDate='+endDate : '' %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+                <% } %>
+
+                <% if(currentPage < totalPages){ %>
+                    <a href="?page=<%= currentPage + 1 %><%= filter ? '&filter='+filter : '' %><%= startDate ? '&startDate='+startDate : '' %><%= endDate ? '&endDate='+endDate : '' %>" class="next">Next &raquo;</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function downloadPDF(){
+    const urlParams = new URLSearchParams(window.location.search);
+    const filter = urlParams.get('filter');
+    const startDate = urlParams.get('startDate');
+    const endDate = urlParams.get('endDate');
+
+    let exportUrl = '/admin/export-sales-report-pdf';
+    const exportParams = new URLSearchParams();
+
+    if(filter){
+        exportParams.append('filter',filter);
+    }
+    if(startDate){
+        exportParams.append('startDate',startDate);
+    }
+    if(endDate){
+        exportParams.append('endDate',endDate);
+    }
+
+    if(exportParams.toString()){
+        exportUrl += '?' + exportParams.toString();
+    }
+
+    const btn = event.currentTarget;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>Generating PDF...';
+
+    //open pdf in new tab or download directly
+    window.open(exportUrl, '_blank');
+
+    //Re-enable button
+    setTimeout(() => {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fas fa-file-pdf me-1"></i>Export PDF';
+    }, 1500);
+}
+
+function downloadExcel(){
+
+    //Get current filter parameter from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const filter = urlParams.get('filter');
+    const startDate = urlParams.get('startDate');
+    const endDate = urlParams.get('endDate');
+
+    //export url
+    let exportUrl = '/admin/export-sales-report';
+    const exportParams = new URLSearchParams();
+
+    if(filter){
+        exportParams.append('filter',filter);
+    }
+    if(startDate){
+        exportParams.append('startDate',startDate);
+    }
+    if(endDate){
+        exportParams.append('endDate',endDate);
+    }
+
+    if(exportParams.toString()){
+        exportUrl += '?' + exportParams.toString();
+    }
+    fetch(exportUrl,{
+        method:'GET',
+        headers:{
+            'Accept': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+    })
+    .then(response => {
+        if(!response.ok){
+            throw new Error('Network response was not ok');
+        }
+        return response.blob();
+    })
+    .then(blob =>{
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.style.display = 'none';
+        a.href = url;
+
+        const filename = `sales_report_${new Date().toISOString().split('T')[0]}.xlsx`;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    })
+    .catch(error => {
+        console.error('Download error:',error);
+        swal.fire('Error','Something went wrong','error');
+    });
+}
+
+document.querySelector('form').addEventListener('submit',function(e){
+    e.preventDefault();
+    const formData = new FormData(this);
+    const params = new URLSearchParams();
+
+    // Add form data to params
+    for (const [key, value] of formData.entries()){
+        if (value) {
+            params.append(key, value);
+        }
+    }
+
+    // preserve the current page
+    const currentPage = new URLSearchParams(window.location.search).get('page');
+    if(currentPage) {
+        params.append('page', currentPage);
+    }
+
+    setTimeout(()=>{
+        window.location.href = this.action + '?' + params.toString();
+    },300);
+});
+
+document.addEventListener('DOMContentLoaded',function(){
+    const cards = document.querySelectorAll('.summary-card');
+    cards.forEach((card,index) => {
+        card.style.animationDelay = `${index * 0.1}s`;
+    });
+});
+</script>

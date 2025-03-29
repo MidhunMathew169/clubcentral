@@ -1,0 +1,308 @@
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+    }
+
+    .wide-container {
+        max-width: 1455px !important;
+    }
+    
+    .gradient-red {
+        background: linear-gradient(-45deg, #dc2626, #ef4444, #dc2626, #b91c1c);
+        background-size: 400% 400%;
+        animation: gradient 15s ease infinite;
+    }
+    
+    @keyframes gradient {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    
+    .hover-scale {
+        transition: transform 0.3s ease;
+    }
+    
+    .hover-scale:hover {
+        transform: scale(1.02);
+    }
+    
+    .rounded-xl {
+        border-radius: 1rem;
+    }
+    
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        border-radius: 0.5rem;
+        transition: all 0.3s ease;
+    }
+    
+    .sidebar-link:hover {
+        background-color: #ffe6e6;
+        color: #dc3545;
+        transform: translateX(0.5rem);
+    }
+    
+    .sidebar-link i {
+        margin-right: 0.75rem;
+    }
+    
+    .wallet-balance {
+        color: white;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+    
+    .wallet-balance p:first-child {
+        font-size: 1.25rem;
+    }
+    
+    .wallet-balance p:last-child {
+        font-size: 2rem;
+        font-weight: bold;
+        animation: bounce 3s infinite;
+    }
+    
+    @keyframes bounce {
+        0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+        40% {transform: translateY(-10px);}
+        60% {transform: translateY(-5px);}
+    }
+    
+    .profile-circle {
+        width: 4rem;
+        height: 4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        transition: transform 0.3s ease;
+    }
+    
+    .profile-circle:hover {
+        transform: rotate(12deg);
+    }
+    
+    .btn-yellow {
+        background-color: #ffc107;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-yellow:hover {
+        background-color: #e0a800;
+        transform: scale(1.05);
+    }
+    
+    .btn-black {
+        background-color: #000;
+        color: white;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .btn-black:hover {
+        background-color: #333;
+        transform: scale(1.05);
+    }
+    
+    .table-row-hover:hover {
+        background-color: #f8f9fa;
+    }
+</style>
+<%- include("../partials/user/header") %>
+<div class="wide-container py-4">
+    <div class="row g-4">
+        <!--sidebar-->
+        <div class="col-md-3">
+            <%- include("../partials/user/sidebar") %>
+        </div>
+        <!--wallet modal-->
+        <div class="modal fade" id="walletModal" tabindex="-1" aria-labelledby="walletModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="walletModalLabel">Add Money</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="text-center text-gray-900">Amount upto 5000</div>
+                    <div class="modal-body">
+                        <form id="addMoneyForm">
+                            <div class="mb-3">
+                                <label for="amount" class="form-label">Amount</label>
+                                <input type="number" class="form-control" id="amount" required>
+                            </div>
+                            <button type="button" class="btn btn-primary" id="addMoneyToWallet">Add Money</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--main content-->
+        <div class="col-md-9">
+            <div class="card shadow hover-scale">
+                <div class="card-body">
+                    <h2 class="fs-2 fw-bold mb-4 text-dark">My Wallet</h2>
+                    
+                    <!-- Wallet Balance Card -->
+                    <div class="gradient-red wallet-balance rounded-xl shadow">
+                        <p class="mb-1">Available wallet balance</p>
+                        <p class="mb-0">₹<%= wallet.balance %></p>
+                    </div>
+                    
+                    <!-- Transactions Table -->
+                    <div class="table-responsive rounded-3 shadow">
+                        <table class="table table-borderless mb-0">
+                            <thead class="bg-light">
+                                <tr>
+                                    <th class="py-3">Transaction ID</th>
+                                    <th class="py-3">Transaction Date</th>
+                                    <th class="py-3">Amount</th>
+                                    <th class="py-3">Description</th>
+                                    <th class="py-3">Debit / Credit</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if(wallet && wallet.transaction && wallet.transaction.length > 0) { %>
+                                <% wallet.transaction.forEach(transaction=>{ %>
+                                <tr class="table-row-hover">
+                                    <td class="py-3">#<%= transaction.transactionId %></td>
+                                    <td class="py-3"><%= transaction.date ? new Date(transaction.date).toLocaleDateString('en-GB',{ day: '2-digit', month: '2-digit', year: 'numeric'}) : 'N/A'%></td>
+                                    <td class="py-3"><%= transaction.amount.toFixed(2) %></td>
+                                    <td class="py-3"><%= transaction.description || 'N/A' %></td>
+                                    <td class="py-3 <%= transaction.type === 'credit' ? 'text-success' : 'text-danger'%>"><%= transaction.type === 'credit' ? 'Credit' : 'Debit' %></td>
+                                </tr>
+                                <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="5" class="text-center py-3">No transactions found</td>
+                                    </tr>
+                                    <% } %>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <button class="btn btn-black mt-4 px-4 py-2 shadow" id="addMoneyBtn">
+                        Add Money
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include("../partials/user/footer") %>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    document.getElementById("addMoneyBtn").addEventListener("click",function(){
+        const walletModal = new bootstrap.Modal(document.getElementById("walletModal"));
+        walletModal.show();
+    })
+
+    document.getElementById("addMoneyToWallet").addEventListener("click",async function(e){
+        e.preventDefault();
+        console.log('addMoneyToWallet clicked');
+        const amount = document.getElementById("amount").value;
+        if(amount > 5000){
+            alert("Amount should be less than 5000");
+            return;
+        }
+        
+        try {
+            const response = await axios.post('create-transaction',{amount});
+            if(!response.data.success){
+                console.log('failed to create transaction');
+                swal.fire({
+                    icon:'error',
+                    title:'Oops...',
+                    text:response.data.message
+                })
+            }
+            const transaction = response.data;
+            console.log('razorpay transaction:',transaction);
+
+            const options = {
+                key: transaction.key,
+                amount: transaction.amount,
+                currency: 'INR',
+                name: 'Club Central',
+                description: 'Test Transaction',
+                order_id: transaction.id,
+                handler: async function(response) {
+                    try {
+                        const verifyResponse = await axios.post('verify-transaction',{
+                            razorpay_order_id : response.razorpay_order_id,
+                            razorpay_payment_id : response.razorpay_payment_id,
+                            razorpay_signature : response.razorpay_signature,
+                            transactionId : transaction.id,
+                            amount
+                        })
+                        const verificationResult = verifyResponse.data;
+                        console.log('verificationResult:',verificationResult);
+
+                        if(!verificationResult){
+                            swal.fire({
+                                icon: 'error',
+                                title: 'Payment Failed',
+                                text: 'payment verification failed'
+                            })
+                        }
+                        else{
+                            swal.fire({
+                                icon: 'success',
+                                title: 'Payment Successful',
+                                text: 'payment successful',
+                                timer: 1500
+                            }).then(()=>{
+                                window.location.href = '/wallet'
+                            })
+                        }
+                    } catch (error) {
+                        console.log('error verifying payment:',error);
+                        swal.fire({
+                            icon: 'error',
+                            title: 'Payment Failed',
+                            text: 'payment verification failed',
+                            timer: 1500
+                        })
+                    }
+                },
+                modal:{
+                    ondismiss: function(){
+                        swal.fire({
+                            icon: 'info',
+                            title: 'Payment Failed',
+                            text: 'payment verification failed',
+                            timer: 1500
+                        }).then(() => {
+                            window.location.href = '/wallet'
+                        })
+                    }
+                },
+                prefill : {
+                    name : 'midhun',
+                    email : 'midhun@gmail.com',
+                    contact : '9876543210'
+                }
+            };
+            const rzp = new Razorpay(options);
+            rzp.open();
+        } catch (error) {
+            console.error('Razorpay payment error:',error);
+            swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Failed to process payment',
+                timer: 1500
+            })
+        }
+
+    })
+</script>

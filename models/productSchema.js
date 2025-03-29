@@ -28,27 +28,30 @@ const productSchema = new Schema({
         type : Number,
         required : true
     },
-    productOffer : {
+    sizes : [
+        {
+            size : {
+                type : String,
+                required : true
+            },
+            quantity : {
+                type : Number,
+                required : true,
+                default : 0
+            }
+        }
+    ],
+    stock : {
         type : Number,
+        required : true,
         default : 0
     },
-    // quantity : {
-    //     type : Number,
-    //     default : true
-    // },
-    sizes : [{
-        size: {
-            type: String,
-            required : true
-        },
-        quantity: {
-            type: Number,
-            required : true,
-            default : 0
-        }
-    }],
+
     fitType : {
         type : String,
+        required : true
+    },
+    sleeve : {
         required : true
     },
     sleeve : {
@@ -69,6 +72,26 @@ const productSchema = new Schema({
         required : true,
         default : "Available"
     },
+    offer : {
+        type : {
+            _id : mongoose.Schema.Types.ObjectId,
+            type: String,
+            enum: ['percentage', 'flat'],
+            default:'percentage'
+        },
+        value : {
+            type: Number,
+            required: false
+        },
+        startDate : {
+            type : Date,
+            required : false
+        },
+        endDate : {
+            type : Date,
+            required : false
+        }
+    }
 },{timestamps : true});
 
 

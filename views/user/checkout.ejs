@@ -1,0 +1,792 @@
+<style>
+    /* Checkout Page Styling */
+main {
+    margin: 0 5%; /* Margin for section from right and left side */
+}
+
+/* Breadcrumb Styling */
+.breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.breadcrumb a::after {
+    content: '→'; /* Arrow between home and cart */
+    margin-left: 10px;
+}
+
+/* Section and Card Styling */
+.container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 30px; /* Add margin bottom to section */
+}
+
+.col-md-5, .col-md-7 {
+    border: 1px solid #e0e0e0; /* Border for both sections */
+    border-radius: 8px;
+}
+
+/* Card Header Styling */
+.card-header {
+    background-color: black;
+    color: white;
+    padding: 15px;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
+}
+.card-header h5 {
+    color: #f8f9fa;
+}
+
+/* Address Card Styling */
+.address-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding: 10px;
+}
+
+.address-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.address-radio input[type="radio"] {
+    margin-right: 10px;
+}
+
+.address-edit {
+    margin-left: auto;
+}
+
+.edit-addbtn :hover{
+    color: #370505;
+}
+
+.recipient {
+    font-weight: bold;
+}
+
+.add-address-btn {
+    background-color: black;
+    color: white;
+    padding: 8px 15px;
+    text-decoration: none;
+    display: inline-block;
+    margin: 15px auto;
+    width: fit-content;
+    text-align: center;
+}
+
+/* Table Styling */
+.table {
+    width: 100%;
+}
+
+.table thead {
+    background-color: black;
+    color: white;
+}
+
+.image.product-thumbnail {
+    display: flex;
+    align-items: center;
+}
+
+.image.product-thumbnail div {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+}
+
+.image.product-thumbnail img {
+    margin-right: 10px;
+}
+
+.image.product-thumbnail h5 {
+    margin: 0;
+}
+
+.image.product-thumbnail p {
+    margin: 0;
+    color: #666;
+}
+
+/* Subtotal and Total Styling */
+.pro-subtotal, .final-total {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Coupon Container */
+.coupon-container {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+}
+
+.coupon-input-group {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.coupon-input-group input {
+    flex-grow: 1;
+    padding: 8px;
+    border: 1px solid #ccc;
+}
+
+.coupon-button-group {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 5px;
+}
+
+.btn-remove {
+    background: linear-gradient(135deg, #dc3545, #e74c3c);
+    color: white;
+}
+
+.btn-coupon, .btn-view-all-coupons {
+    background-color: black;
+    color: white;
+    padding: 8px 15px;
+    border: none;
+    border-radius: 4px;
+}
+
+.btn-view-all-coupons {
+    background-color: #333; /* Darker shade */
+    width: 100%; /* Same size as place order button */
+}
+
+/* Payment Method Styling */
+.payment-method {
+    margin-top: 20px;
+}
+
+.payment-method h5 {
+    margin-bottom: 15px;
+}
+
+.payment-method .custom-radio {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.payment-method button {
+    background-color: black;
+    color: white;
+    width: 100%;
+    text-align: center;
+    padding: 10px;
+    border: none;
+    border-radius: 4px;
+    margin-top: 15px;
+}
+.payment-method button:hover {
+    background-color: #555;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+    
+    .col-md-5, .col-md-7 {
+        width: 100%;
+    }
+}
+</style>
+<%- include("../partials/user/header") %>
+
+<main class="">
+    <div class="page-header breadcrumb-wrap" data-aos="fade-up">
+        <div class="container">
+            <div class="breadcrumb">
+                <a href="/" rel="nofollow">Home</a>
+                <span>Cart</span>
+            </div>
+        </div>
+    </div>
+
+    <section class="container">
+        <!--left section-->
+        <div class="col-md-5">
+            <div class="checkout-card address section">
+                <!--
+                The card-header div contains the title of the shipping address section.
+                It also contains a Font Awesome icon for the map marker.
+                -->
+                <div class="card-header">
+                    <h5><i class="fas fa-map-marker-alt"></i>Shipping Address</h5>
+                </div>
+                <div class="card-body">
+                    <% addresses.forEach((address,index)=>{ %>
+                    <div class="address-card" data-aos="fade-up" data-aos-delay="<%= index * 100 %>">
+                        <div class="address-radio">
+                            <input type="radio" name="selected_address" id="address<%= index %>" value="<%= address._id %>" <%= index === 0 ? 'checked' : '' %>>
+                            <label for="address<%= index %>" class="address-content">
+                                <!--<div class="address-type">Home</div>-->
+                                <div class="recipient"><%= address.firstName %> <%= address.lastName %></div>
+                                <div class="address-details"><%= address.resAddress %><br>
+                                <%= address.place %>,<%= address.state %>,<%= address.pincode %>
+                            </div>
+                            </label>
+                        </div>
+                        <div class="address-edit">
+                            <a href="/editAddress/<%= address._id %>?redirect=checkout" class="edit-addbtn"><i class="fas fa-edit"></i>Edit</a>
+                        </div>
+                    </div>
+                    <% }) %>
+                    <a href="/addAddress?redirect=checkout" class="add-address-btn">+ Add Address</a>
+                </div>
+            </div>
+        </div>
+        <!--right section-->
+        <div class="col-md-7">
+            <div class="checkout-card">
+                <div class="card-header">
+                    <h5><i class="fas fa-shopping-bag"></i>Your Orders</h5>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>product</th>
+                                    <th>quantity</th>
+                                    <th>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <% if(products && products.length>0){ %>
+                                    <% products.forEach(item =>{ %>
+                                <tr>
+                                    <td class="image product-thumbnail">
+                                        <div>
+                                            <img src="/uploads/re-images/<%= item.productId.productImage[0] %>" alt="<%= item.productId.productName %>" style="width: 80px; height: 80px; object-fit: cover;">
+                                            <h5><%= item.productId.productName %></h5>
+                                            <p>size:<%= item.size %></p>
+                                        </div>
+                                    </td>
+                                    <td><%= item.quantity %></td>
+                                    <td><span>₹<%= item.productId.salePrice * item.quantity %></span></td>
+                                </tr>
+                                <% }) %>
+                                <% } else { %>
+                                    <tr>
+                                        <td colspan="3">No products in cart</td>
+                                    </tr>
+                                <% } %>
+                                <tr>
+                                    <th>SubTotal</th>
+                                    <td class="pro-subtotal"><span id="subtotal">₹<%= cartTotals.total %></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Discount</th>
+                                    <td><span id="discountAmount"><%= cart.discountAmount ? cart.discountAmount.toFixed(2) : '0.00' %></span></td>
+                                </tr>
+                                <tr>
+                                    <th>Delivery Charge</th>
+                                    <td><% if(cartTotals.deliveryCharge > 0) {%>
+                                        ₹<%= cartTotals.deliveryCharge %>
+                                    <% } else { %>
+                                        <em>Free Delivery</em></td>
+                                    <% } %>
+                                </tr>
+                                <tr>
+                                    <th>Final Total</th>
+                                    <td><span id="finalTotal">₹<%= 
+                                        typeof cartTotals === 'object' && cartTotals.finalTotal ? 
+                                        cartTotals.finalTotal :
+                                        (typeof cartTotals === 'number' ?
+                                            (cartTotals - (cart.discountAmount ? parseFloat(cart.discountAmount) : 0)) :
+                                            0
+                                        ) %></span></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!--coupon modal-->
+                    <div class="modal fade" id="couponsModal" tabindex="-1" aria-labelledby="couponsModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="couponsModalLabel">Available Coupons</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <div class="modal-body">
+                                    <ul id="couponList"></ul>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" onclick="closeModal()">Close</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="coupon-container">
+                        <form action="" id="couponForm">
+                            <div class="coupon-input-group">
+                                <input type="text" name="couponCode" id="couponCode" placeholder="Enter coupon code">
+                                <input type="hidden" id="orderValue" name="orderValue" value="<%= cartTotals.total %>">
+                            </div>
+                            <div class="coupon-button-group">
+                                <% if (!cart.couponCode) { %>
+                                    <button type="button" class="btn-coupon btn-apply" id="applyCouponBtn" onclick="applyCoupon()">
+                                        <i class="fa fa-check"></i>Apply Coupon
+                                    </button>
+                                    <button type="button" id="removeCouponBtn" class="btn-coupon btn-remove" onclick="removeCoupon('<%= user._id %>')">
+                                        <i class="fas-fa-times"></i> Remove Coupon
+                                    </button>
+                                <% } else { %>
+                                <% } %>
+                                </div>
+                        </form>
+                        <button type="button" class="btn-view-all-coupons" onclick="fetchCoupons()">
+                            <i class="fas fa-tags"></i> View Available Coupons
+                        </button>
+                    </div>
+
+                    <div class="payment-method">
+                        <div class="">
+                            <h5>Payment Method</h5>
+
+                            <div class="custom-radio">
+                                <input class="form-check-input" type="radio" name="payment_option" value="Wallet" id="walletBtn">
+                                <label class="form-check-label" for="payment_option">Wallet</label>
+                            </div>
+                            <div class="custom-radio">
+                                <input class="form-check-input" type="radio" name="payment_option" value="COD" id="codBtn">
+                                <label class="form-check-label" for="payment_option">Cash on Delivery</label>
+                            </div>
+                            <div class="custom-radio">
+                                <input class="form-check-input" type="radio" name="payment_option" value="Razorpay" id="razorpayBtn">
+                                <label class="form-check-label" for="payment_option">Razorpay</label>
+                            </div>
+                        </div>
+
+                        <div id="razorpayButtonContainer" class="hidden">
+                            <button type="submit" class="btn btn-fill-out btn-block" id="onlinePayment">Place Order</button>
+                        </div>
+                        <div id="codButtonContainer">
+                            <button type="submit" class="btn btn-fill-out btn-block" id="placeOrderBtn">Place Order</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</main>
+
+<%- include("../partials/user/footer") %>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    // Fetch all the coupons
+    let couponsModalInstance = null;
+    async function fetchCoupons() {
+        try {
+            const response = await axios.get('/coupons');
+            const coupons = response.data.coupons;
+            console.log('available coupons are:',coupons);
+            
+            const couponList = document.getElementById("couponList");
+            couponList.innerHTML = "";
+
+            if(coupons.length > 0){
+                coupons.forEach(coupon => {
+                    const li = document.createElement("li");
+                    li.innerHTML = `<div><strong>${coupon.couponName}</strong>: ${coupon.description} </div>
+                                    <div><strong>${coupon.code}</strong></div>
+                                    <button class="btn btn-success btn-sm" onclick="selectCoupon('${coupon.code}')">Use This Coupon</button>`;
+                                    couponList.appendChild(li);
+                });
+            }
+            else {
+                couponList.innerHTML = `<p>No coupon available for your purchase amount</p>`
+            }
+
+            //manually show modal
+            const modalElement = document.getElementById("couponsModal");
+            if(!couponsModalInstance){
+                couponsModalInstance = new bootstrap.Modal(modalElement,{backdrop:'static',keyboard:true});
+            }
+            couponsModalInstance.show();
+        } catch (error) {
+            console.error('Error fetching coupons:', error);
+        }
+    }
+
+    function selectCoupon(code){
+        document.getElementById('couponCode').value = code;
+        localStorage.setItem('selectedCoupon',code);
+        console.log('selected coupon code:',code);
+
+        closeModal();
+    }
+
+    function closeModal(){
+        const modalElement = document.getElementById("couponsModal");
+        const modalInstance = bootstrap.Modal.getInstance(modalElement);
+
+        if (modalInstance) {
+            modalInstance.hide();
+        }
+
+        document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+
+        document.body.classList.remove('modal-open');
+        document.body.style.overflow = "";
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+    document.getElementById('placeOrderBtn').addEventListener('click',async () => {
+        console.log('place order button clicked');
+        const selectedAddress = document.querySelector('input[name="selected_address"]:checked').value;
+        const paymentOption = document.querySelector('input[name="payment_option"]:checked').value;
+        console.log('payment method:',paymentOption);
+        const couponCode = document.getElementById('couponCode')?.value.trim();
+
+        if(!selectedAddress || !paymentOption){
+            Toastify({
+                text: "Please select an address and payment option",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "center",
+                background: "#ff6b6b",
+                stopOnFocus: true
+            }).showToast();
+            return;
+        }
+
+        try {
+            const response = await axios.post('/placeOrder',{selectedAddress,paymentOption,couponCode:couponCode || null});
+
+            if(response.data.success){
+                swal.fire({
+                    icon:'success',
+                    title:'Order Placed',
+                    text:response.data.message||'Your order has been placed successfully!',
+                    timer:1500,
+                    showConfirmButton:false
+                })
+                window.location.href = '/orders';
+            }
+            else{
+                console.log('try block executed');
+                swal.fire({
+                    icon:'error',
+                    title:'Oops...',
+                    text:response.data.message || 'Order failed.Please try again'
+                })
+            }
+        } catch (error) {
+            console.log('Error placing order:', error);
+                swal.fire({
+                    icon:'error',
+                    title:'Oops...',
+                    text:error.error.response?.data?.message || 'Something went wrong'
+                });
+            
+        }
+    });
+    });
+
+    async function applyCoupon() {
+        const couponCode = document.getElementById('couponCode').value;
+        if(!couponCode){
+            swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: 'Please enter a coupon code'
+            });
+            return;
+        }
+        console.log('code of coupon:',couponCode);
+        const orderValue = document.getElementById('orderValue').value;
+
+        try {
+            const response = await axios.post('/applyCoupon', {couponCode,orderValue});
+            if(response.data.success){
+                console.log('discount amount is:',response.data.discount);
+                console.log('final amount is :',response.data.finalPrice);
+                document.getElementById('discountAmount').innerText = response.data.discount;
+                document.getElementById('finalTotal').innerText = response.data.finalPrice;
+
+                //toggle buttons
+                // document.getElementById('applyCouponBtn').style.display = 'none';
+                // document.getElementById('removeCouponBtn').style.display = 'block';
+                
+                swal.fire({
+                    icon:'success',
+                    title:'Coupon Applied',
+                    text:response.data.message,
+                    timer:1500,
+                    showConfirmButton:false
+                });
+                // setTimeout(() => {
+                //     window.location.reload();
+                // },1500);
+            }
+            else{
+                swal.fire({
+                    icon:'error',
+                    title:'Oops...',
+                    text:response.data.error || 'Failed to apply coupon'
+                });
+            }
+        } catch (error) {
+            console.error('Error applying coupon:', error);
+
+            const errorMessage = error.response && error.response.data && (error.response.data.error || error.response.data.message)
+                                  ? error.response.data.error || error.response.data.message
+                                  : 'Something went wrong';
+            swal.fire({
+                icon:'error',
+                title:'Oops...',
+                text: errorMessage
+            });
+        }
+    }
+
+    async function removeCoupon(userId) {
+        console.log('removing coupon');
+        try {
+            const response = await axios.post('/deleteCoupon',{userId})
+            if(response.data.success){
+                document.getElementById("discountAmount").innerText = "0.00";
+                document.getElementById("finalTotal").innerText = response.data.newTotal;
+
+                // document.getElementById('applyCouponBtn').style.display = 'block'
+                // document.getElementById('removeCouponBtn').style.display = 'none';
+
+                document.getElementById('couponCode').value = '';
+                swal.fire({
+                    icon:'success',
+                    title:'coupon removed',
+                    text: response.data.message || 'Coupon removed successfully',
+                    showConfirmButton: false,
+                    timer: 1500
+                })
+                setTimeout(() => {
+                    window.location.reload();
+                },1500);
+            }
+            else{
+                console.log('res.success:false')
+                swal.fire({
+                    icon: 'error',
+                    title: 'error occured',
+                    text:response.data.message || 'Failed to remove coupon'
+                });
+            }
+        } catch (error) {
+            console.error('error occured:',error);
+            swal.fire({
+                icon:'error',
+                title:'Oops',
+                text: 'something went wrong'
+            });
+        }
+    }
+
+    document.getElementById('onlinePayment').addEventListener('click', async function() {
+        const selectedAddress = document.querySelector('input[name="selected_address"]:checked');
+        console.log('razorpay button triggered');
+
+        calculateTotalAmount();
+        if(!selectedAddress){
+            console.log('address not selected');
+            Toastify({
+                text: "Please select an address",
+                duration: 3000,
+                close: true,
+                gravity: "top",
+                position: "center",
+                background: "#ff6b6b",
+                stopOnFocus: true
+            }).showToast();
+            return;
+        }
+
+        const data = {
+            addressId : selectedAddress.value,
+            amount : totalAmount
+        };
+        try {
+            //create pending order
+            const pendingOrderResponse = await axios.post('/create-pending-order',data,{
+                headers : {"content-type":"application/json"}
+            });
+
+            if(!pendingOrderResponse.data.success){
+                console.log('failed to create pending orders');
+                swal.fire({
+                    icon:'error',
+                    title:'Oops...',
+                    text:pendingOrderResponse.data.message
+                });
+            }
+
+            const pendingOrder = pendingOrderResponse.data;
+            console.log('pendingOrders:',pendingOrder);
+
+            //create razorpay order
+            const orderResponse = await axios.post('/createOrder',{
+                amount :totalAmount,
+                orderId : pendingOrder.orderId
+            });
+
+            if(!orderResponse.data.success){
+                console.log('failed to create razorpay order');
+                swal.fire({
+                    icon:'error',
+                    title:'Oops...',
+                    text:orderResponse.data.message
+                })
+            }
+
+            const order = orderResponse.data;
+            console.log('razorpay response:',order);
+            
+            const options = {
+                key: order.key,
+                amount: order.amount,
+                currency: 'INR',
+                name: 'Club Central',
+                description: 'Test Transaction',
+                order_id: order.id,
+                handler: async function(response) {
+                    try {
+                        const verifyResponse = await axios.post('/verifyPayment',{
+                            razorpay_order_id : response.razorpay_order_id,
+                            razorpay_payment_id : response.razorpay_payment_id,
+                            razorpay_signature : response.razorpay_signature,
+                            orderId : pendingOrder.orderId
+                        })
+                        const verificationResult = verifyResponse.data;
+                        console.log('verificationResult:',verificationResult);
+
+                        if(!verificationResult){
+                            swal.fire({
+                            icon: 'error',
+                            title: 'Payment Failed',
+                            text: 'payment verification failed'
+                           })
+                        }
+                        else{
+                            swal.fire({
+                                icon: 'success',
+                                title: 'Payment Successful',
+                                text: 'Your order has been placed successfully',
+                                timer: 1500
+                            }).then(()=>{
+                                window.location.href = '/orders'
+                            })
+                        }
+                    } catch (error) {
+                        console.log('error verifying payment:',error);
+                        swal.fire({
+                            icon:'error',
+                            title:'payment verification failed',
+                            text:'payment verification failed.you can retry from orders page',
+                            timer:1500
+                        }).then(()=>{
+                            window.location.href = '/orders'
+                        })
+                    }
+                },
+            modal:{
+                ondismiss: async function() {
+                    try {
+                        await axios.post('/update-order-status',{
+                            orderId : pendingOrder.orderId,
+                            paymentStatus : 'Failed',
+                            status : 'Pending'
+                        });
+                        swal.fire({
+                            icon : 'error',
+                            title : 'Payment Failed',
+                            text : 'payment verification failed.you can retry from orders page',
+                            timer:1500
+                        }).then(() =>{
+                            window.location.href = '/orders'
+                        })
+                    } catch (error) {
+                        console.error('error in updating order status:',error);
+                    }
+                }
+            },
+            prefill : {
+                name : 'midhun',
+                email : 'midhun@gmail.com',
+                contact : '9876543210'
+               }
+           };
+           const rzp = new Razorpay(options);
+           rzp.open();
+        } catch (error) {
+            console.error('Razorpay payment error:',error);
+            swal.fire({
+                icon: 'error',
+                title: 'Error',
+                text: error.message || 'Failed to process payment'
+            });
+        }
+    });
+
+    let totalAmount = 0;
+
+    function calculateTotalAmount() {
+        const finalTotalElement = document.getElementById('finalTotal');
+        if(finalTotalElement){
+            totalAmount = parseFloat(finalTotalElement.innerText.replace('₹',''));
+            console.log('totalAmount:',totalAmount);
+        }
+    }
+    document.addEventListener('DOMContentLoaded', () => {
+
+        calculateTotalAmount();
+        const paymentOptions = document.getElementsByName('payment_option');
+        const razorpayButtonContainer = document.getElementById('razorpayButtonContainer');
+        const codButtonContainer = document.getElementById('codButtonContainer');
+
+        function updateButtonVisibility(){
+            const selectedOption = [...paymentOptions].find(option => option.checked)?.value;
+            console.log('selected payment method:',selectedOption);
+            if(selectedOption === 'Razorpay'){
+                razorpayButtonContainer.classList.remove('hidden');
+                codButtonContainer.classList.add('hidden');
+            }
+            else {
+                razorpayButtonContainer.classList.add('hidden');
+                codButtonContainer.classList.remove('hidden');
+            }
+        }
+
+        //add eventlistener to all payment options
+        paymentOptions.forEach(option => {
+            option.addEventListener('change',updateButtonVisibility);
+        })
+
+        //
+        updateButtonVisibility();
+    })
+</script>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js@1.11.2/src/toastify.min.css">
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js@1.11.2/src/toastify.min.js"></script>

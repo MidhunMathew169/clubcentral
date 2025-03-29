@@ -1,0 +1,148 @@
+<style>
+    .content-wrapper {
+        display: flex;
+        width: 100%;
+    }
+
+    aside {
+        width: 25%;
+        max-width: 300px;
+        background-color: #f9f9f9;
+        padding: 20px;
+        box-sizing: border-box;
+    }
+
+    main {
+        flex-grow: 1;
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        width: 75%;
+    }
+
+    .row {
+        width: 100%;
+        max-width: 600px;
+    }
+
+    .form-container {
+        background-color: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .profile-group {
+        margin-bottom: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .profile-group label {
+        font-weight: bold;
+        color: #333;
+        margin-right: 15px;
+        min-width: 120px;
+    }
+
+    .profile-group .value {
+        color: #666;
+        flex-grow: 1;
+        padding: 10px;
+        background-color: #f9f9f9;
+        border-radius: 4px;
+    }
+
+    .edit-section {
+        border-top: 1px solid #e0e0e0;
+        padding-top: 20px;
+        text-align: center;
+    }
+
+    .edit-btn {
+        display: inline-block;
+        background-color: var(--primary, #065f29);
+        color: white;
+        text-decoration: none;
+        padding: 12px 24px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .edit-btn:hover {
+        background-color: #044020;
+    }
+
+    @media (max-width: 992px) {
+        .content-wrapper {
+            flex-direction: column;
+        }
+
+        aside {
+            width: 100%;
+            max-width: 100%;
+        }
+
+        main {
+            width: 100%;
+            padding: 10px;
+        }
+
+        .profile-group {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .profile-group label {
+            margin-bottom: 5px;
+            min-width: auto;
+        }
+
+        .profile-group .value {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="content-wrapper">
+    <aside>
+        <%- include('../partials/user/sidebar') %>
+    </aside>
+    <main>
+        <div class="row">
+            <div class="form-container">
+                <h2 class="text-primary">My Profile</h2>
+                <div class="profile-group">
+                    <label for="firstName" class="text-dark">First Name</label>
+                    <div class="value" id="firstName"><%= user.firstname %></div>
+                </div>
+                <div class="profile-group">
+                    <label for="lastName" class="text-dark">Last Name</label>
+                    <div class="value" id="lastName"><%= user.lastname %></div>
+                </div>
+                <div class="profile-group">
+                    <label for="email" class="text-dark">Email</label>
+                    <div class="value" id="email"><%= user.email %></div>
+                </div>
+                <div class="profile-group">
+                    <label for="phoneNumber" class="text-dark">Phone Number</label>
+                    <div class="value" id="phoneNumber"><%= user.phone || 'Not provided' %></div>
+                </div>
+                <div class="edit-section">
+                    <a href="/editProfile" class="edit-btn">Edit Profile</a>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>

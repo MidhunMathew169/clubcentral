@@ -1,0 +1,169 @@
+<style>
+    body {
+        background-color: #f8f9fa;
+    }
+    /* breadcrumbs */
+    .breadcrumb-wrap {
+        margin-bottom: 10px;
+        background-color: #f8f9fa;
+        padding: 15px 0;
+    }
+
+    .breadcrumb {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin: 0;
+    }
+
+    .breadcrumb a {
+        color: #666;
+        text-decoration: none;
+    }
+
+    .breadcrumb span {
+        color: #333;
+    }
+    .container {
+        max-width: 1200px;
+        margin-bottom: 10px; /* Added margin bottom */
+    }
+    .order-details {
+        display: flex;
+        flex-wrap: wrap;
+    }
+    .product-info {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    .order-summary {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+    .box {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        border: 1px solid #ddd;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* New styles for page-header and title-header */
+    .page-header {
+        background-color: black;
+        color: white;
+        padding: 15px;
+        margin-bottom: 20px; /* Added space below */
+    }
+    .page-header h4 {
+        font-weight: 700; /* Bolder text */
+        margin: 5px 0;
+    }
+    .title-header {
+        background-color: black;
+        color: white;
+        padding: 10px 15px;
+        margin-bottom: 15px; /* Added space below */
+    }
+    .title-header h5 {
+        margin: 0;
+    }
+    
+    /* Added spacing between sections */
+    .product-thumbnail,
+    .timeline,
+    .review {
+        margin-bottom: 30px;
+    }
+
+    /* Ensure proper spacing for Bootstrap columns */
+    @media (min-width: 992px) {
+        .order-details .col-lg-8,
+        .order-details .col-lg-4 {
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+    }
+</style>
+
+<div class="page-head breadcrumb-wrap" data-aos="fade-up">
+    <div class="container">
+        <div class="breadcrumb">
+            <a href="/" rel="nofollow">Home</a>
+            <span>Orders</span>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-2">
+    <div class="order-details row">
+        <!-- Product Details -->
+        <div class="product-info col-lg-8">
+            <div class="product-thumbnail">
+                <div class="page-header">
+                    <h4>Order #<%= order.orderId %></h4>
+                    <h4><%= order.status %></h4>
+                </div>
+                <% order.items.forEach(item => { %>
+                <div class="d-flex align-items-center mb-3">
+                    <img src="/uploads/re-images/<%= item.product.productImage[0] %>" alt="<%= item.product.productName %>" style="width: 80px; height: 80px; object-fit: cover;">
+                    <div class="ms-3">
+                        <h5><%= item.product.productName %></h5>
+                        <p>Size: <%= item.size %> | Quantity: <%= item.quantity %></p>
+                        <p class="text-success">₹<%= item.price %></p>
+                    </div>
+                </div>
+                <% }) %>
+            </div>
+            <div class="timeline">
+                <div class="title-header">
+                    <h5>Order Timeline</h5>
+                </div>
+                <ul>
+                    <li>Order Placed: Feb 15, 2025</li>
+                    <li>Shipped: Feb 17, 2025</li>
+                    <li>Delivered: Feb 19, 2025</li>
+                </ul>
+            </div>
+            <div class="review">
+                <div class="title-header">
+                    <h5>Rating & Review</h5>
+                </div>
+                <button class="btn btn-primary">Add Review</button>
+            </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div class="order-summary col-lg-4">
+            <div class="box">
+                <div class="title-header">
+                    <h5>Shipping Address</h5>
+                </div>
+                <div><%= order.address.firstName %> <%= order.address.lastName %></div>
+                <div><%= order.address.resAddress %>, <%= order.address.street %>, <%= order.address.place %></div>
+                <div><%= order.address.city %>, <%= order.address.state %>, <%= order.address.pincode %></div>
+                <div>+91 <%= order.address.phone %></div>
+            </div>
+            <div class="box">
+                <div class="title-header">
+                    <h5>Payment Details</h5>
+                </div>
+                <p>Payment Method: <%= order.paymentMethod %></p>
+                <p>Payment Status: <%= order.paymentStatus %></p>
+                <p class="fw-bold">₹<%= order.finalAmount %></p>
+            </div>
+            <div class="box">
+                <div class="title-header">
+                    <h5>Order Invoice</h5>
+                </div>
+                <button class="btn btn-outline-dark w-100">Download Invoice</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<%- include("../partials/user/footer") %>

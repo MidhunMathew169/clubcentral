@@ -1,17 +1,123 @@
-
-<div class="profile-section">
-    <div class="profile-avatar">
-        <img src="https://via.placeholder.com/80" alt="User Avatar" />
+<style>
+    .sidebar {
+        width: 280px;
+        background: white;
+        border-radius: 1rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        padding: 1.5rem;
+    }
+    
+    .gradient-circle {
+        width: 4rem;
+        height: 4rem;
+        background: linear-gradient(45deg, #ff6b6b, #ff8787);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.5rem;
+        font-weight: bold;
+        transition: transform 0.3s;
+    }
+    
+    .gradient-circle:hover {
+        transform: rotate(12deg);
+    }
+    
+    .profile-name {
+        text-align: center;
+        margin-top: 0.75rem;
+    }
+    
+    .nav-link {
+        display: flex;
+        align-items: center;
+        padding: 0.75rem;
+        color: #333;
+        border-radius: 0.5rem;
+        transition: all 0.3s;
+    }
+    
+    .nav-link:hover {
+        background-color: #fff1f1;
+        color: #dc3545;
+        transform: translateX(0.5rem);
+    }
+    
+    .nav-link i {
+        margin-right: 0.75rem;
+        width: 20px;
+    }
+    
+    .logout-btn {
+        background-color: #ffc107;
+        border: none;
+        transition: all 0.3s;
+    }
+    
+    .logout-btn:hover {
+        background-color: #ffca2c;
+        transform: scale(1.05);
+    }
+    
+    /* Add animation for sidebar */
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .animate-slide {
+        animation: slideDown 0.5s ease-out;
+    }
+    
+    </style>
+    <div class="sidebar animate-slide">
+        <div class="text-center mb-4">
+            <div class="gradient-circle">
+                M
+            </div>
+            <div class="profile-name fs-4 fw-bold"><%= user.firstname %></div>
+        </div>
+        
+        <nav class="nav flex-column mb-4">
+            <a href="/userProfile" class="nav-link">
+                <i class="fas fa-user"></i>
+                <span>My Profile</span>
+            </a>
+            <a href="/addresses" class="nav-link">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>My Address</span>
+            </a>
+            <a href="/orders" class="nav-link">
+                <i class="fas fa-box"></i>
+                <span>Orders</span>
+            </a>
+            <a href="/wishlist" class="nav-link">
+                <i class="fas fa-heart"></i>
+                <span>Wishlist []</span>
+            </a>
+            <a href="/wallet" class="nav-link">
+                <i class="fas fa-wallet"></i>
+                <span>Wallet</span>
+            </a>
+            <a href="/coupons" class="nav-link">
+                <i class="fas fa-ticket-alt"></i>
+                <span>Coupon</span>
+            </a>
+            <a href="/changePassword" class="nav-link">
+                <i class="fas fa-key"></i>
+                <span>Change Password</span>
+            </a>
+        </nav>
+        
+        <button class="btn logout-btn text-white w-100 py-2 fw-semibold">
+            <a href="/logout">Log Out</a>
+        </button>
     </div>
-    <h3 class="profile-name">Midhun</h3>
-</div>
-<ul class="sidebar-menu">
-    <li><a href="/account"><i class="icon">👤</i> Account Overview</a></li>
-    <li><a href="/orders"><i class="icon">📦</i> My Orders</a></li>
-    <li><a href="/addresses" class="active"><i class="icon">📍</i> Manage Addresses</a></li>
-    <li><a href="/wallet"><i class="icon">💳</i> Wallet</a></li>
-</ul>
-<div class="logout-section">
-    <a href="/logout" class="logout-btn">LOGOUT</a>
-</div>
-</div>

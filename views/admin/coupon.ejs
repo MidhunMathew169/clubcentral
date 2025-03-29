@@ -1,0 +1,196 @@
+<title>coupon</title>
+<style>
+    .flex-h-screen {
+        display: flex;
+        min-height: 100vh;
+    }
+    .flex-1 {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        overflow-x: hidden;
+    }
+    .main-content {
+        padding: 20px;
+        flex: 1;
+    }
+    .header-section {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding: 0 20px;
+    }
+    .header-section h2 {
+        font-size: 24px;
+        font-weight: 600;
+    }
+    .search-input {
+        width: 300px;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        margin-right: 20px;
+    }
+    .btn-add {
+        background-color: #000;
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .table-responsive {
+        overflow-x: auto;
+        background: white;
+        margin: 0 20px;
+    }
+    .table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+    .table th {
+        background-color: #000;
+        color: white;
+        font-weight: 500;
+        text-align: left;
+        padding: 12px 15px;
+        white-space: nowrap;
+    }
+    .table td {
+        padding: 12px 15px;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+        height: 80px;
+        position: relative;
+    }
+    .table tr td {
+        line-height: normal;
+    }
+    .pagination {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+    .pagination a {
+        padding: 8px 12px;
+        margin: 0 5px;
+        text-decoration: none;
+        color: #333;
+        background: #f1f1f1;
+        border-radius: 5px;
+    }
+    .pagination a.active {
+        background: #007bff;
+        color: white;
+    }
+    .pagination a:hover {
+        background: #0056b3;
+        color: white;
+    }
+</style>
+<div class="flex-h-screen">
+    <!--sidebar section-->
+    <%- include('../partials/admin/side bar') %>
+
+    <div class="flex-1">
+        <!--header section-->
+        <%- include('../partials/admin/header') %>
+        <div class="main-content">
+            <div class="header-section">
+                <h2>Available Coupons</h2>
+                <div>
+                    <input type="text" class="search-input" placeholder="Search orders...">
+                    <button class="btn-add" onclick="location.href='/admin/addCoupon'">
+                        Add coupon
+                    </button>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Coupon Code</th>
+                            <th>Min Purchase</th>
+                            <th>Limit</th>
+                            <th>Discount</th>
+                            <th>Start Date</th>
+                            <th>End Date</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% coupons.forEach(coupon => { %>
+                            <tr id="">
+                                <td><%= coupon.couponName %></td>
+                                <td><%= coupon.code %></td>
+                                <td>Above <%= coupon.minPurchase %></td>
+                                <td><%= coupon.limit %></td>
+                                <td><%= coupon.discount %>% off</td>
+                                <td><%= new Date(coupon.startedOn).toLocaleDateString() %></td>
+                                <td><%= new Date(coupon.expireOn).toLocaleDateString() %></td>
+                                <td>
+                                    <div class="btn-group">
+                                        <a href="/admin/editCoupon/<%= coupon._id %>" class="btn btn-sm btn-info"><i class="fas fa-edit"></i></a>
+                                        <a href="#" onclick="confirmDelete('<%= coupon._id %>')" class="btn btn-sm btn-danger"><i class="fas fa-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="container mt-3">
+            <div class="pagination">
+                <% if(currentPage > 1){ %>
+                    <a href="?page=<%= currentPage - 1 %>" class="prev">&laquo; Previous</a>
+                <% } %>
+
+                <% for(let i=1; i<=totalPages; i++){ %>
+                    <a href="?page=<%= i %>" class="<%= currentPage === i ? 'active' : '' %>"><%= i %></a>
+                <% } %>
+
+                <% if(currentPage < totalPages){ %>
+                    <a href="?page=<%= currentPage + 1 %>" class="next">Next &raquo;</a>
+                <% } %>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function confirmDelete(couponId){
+        console.log('deleteCoupon:',couponId);
+        if(event) event.preventDefault();
+        swal.fire({
+            title: 'Are you sure?',
+            text: "You won't be able to revert this!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'delete',
+            timer: 5000
+        }).then((result) => {
+            if(result.isConfirmed){
+                axios.post("/admin/deleteCoupon",{couponId})
+                .then(response =>{
+                    if(response.data.success){
+                        console.log('coupon deleted successfully');
+                        swal.fire('Deleted!',response.data.message,'success')
+                        .then(()=> window.location.reload())
+                    }
+                    else{
+                        swal.fire('Error!',response.data.message,'error');
+                    }
+                })
+                .catch(error =>{
+                    console.error('error in deleting coupon',error);
+                    swal.fire('Error!','something went wrong','error');
+                })
+            }
+        });
+    }
+</script>

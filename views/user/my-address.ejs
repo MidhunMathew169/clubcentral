@@ -1,0 +1,212 @@
+<style>
+    body {
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+    }
+
+    aside {
+        width: 25%;
+        max-width: 300px;
+    }
+
+    main {
+        margin-left: 25%;
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+    }
+
+    .row {
+        width: 100%;
+        max-width: 800px;
+    }
+
+    .form-container {
+        background-color: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .page-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+    }
+
+    .page-header h2 {
+        margin: 0;
+        color: #333;
+    }
+
+    .add-address-btn {
+        background-color: black;
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        transition: background-color 0.3s ease;
+    }
+
+    .add-address-btn:hover {
+        background-color: #333;
+    }
+
+    .address-card {
+        background-color: #f9f9f9;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .card-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #f0f0f0;
+        padding: 15px;
+    }
+
+    .card-head .title {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .card-head .icons {
+        display: flex;
+        gap: 15px;
+    }
+
+    .card-head .icons i {
+        color: #666;
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .card-head .icons i:hover {
+        color: #333;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-body .name {
+        font-size: 18px;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+    }
+
+    .card-body > div:not(.name) {
+        color: #666;
+        margin-bottom: 5px;
+        font-size: 16px;
+    }
+
+    @media (max-width: 768px) {
+        aside {
+            width: 100%;
+            max-width: 100%;
+            position: static;
+        }
+
+        main {
+            margin-left: 0;
+            padding: 10px;
+        }
+
+        .page-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .add-address-btn {
+            margin-top: 15px;
+            align-self: flex-start;
+        }
+    }
+</style>
+
+<%- include("../partials/user/header") %>
+<aside>
+    <%- include("../partials/user/sidebar") %>
+</aside>
+<main class="col-lg-9 col-md-8">
+    <div class="row">
+        <div class="form-container">
+            <div class="page-header">
+                <h2 class="text-primary">My Address</h2>
+                <a href="/addAddress" class="add-address-btn">+ Add Address</a>
+            </div>
+            <% if(addresses.length > 0){ %>
+            <% addresses.forEach((address,i)=>{ %>
+            <div class="address-card">
+                <div class="card-head"> 
+                    <div class="title">DELIVERY ADDRESS : <%= i + 1 %></div>
+                    <div class="icons">
+                        <a href="/editAddress/<%= address._id %>"><i class="fas fa-edit"></i></a>
+                        <a href="javascript:void(0)" onclick="deleteAddress('<%= address._id %>')"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="name"><%= address.firstName %> <%= address.lastName %></div>
+                    <div><%= address.resAddress %>, <%= address.street %>, <%= address.place %></div>
+                    <div><%= address.city %>, <%= address.state %>, <%= address.pincode %></div>
+                    <div>+91 <%= address.phone %></div>
+                </div>
+            </div>
+            <% }) %>
+            <% }else{ %>
+            <div class="no-address">
+                <p>You have not added any address yet.</p>
+            </div>
+            <% } %>
+        </div>
+    </div>
+</main>
+<%- include("../partials/user/footer") %>
+
+<script>
+    function deleteAddress(addressId){
+        console.log('deleteAddress',addressId);
+        if(event) event.preventDefault();
+        Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'delete',
+        timer: 5000
+        }).then((result) => {
+        if (result.isConfirmed) {
+            console.log("delete",addressId)
+            axios.post("/deleteAddress",{addressId})
+            .then(response =>{
+                if(response.data.success){
+                    console.log(" res.data is success deleted")
+                    Swal.fire('Deleted!',response.data.message,'success')
+                    .then(()=> window.location.reload())
+                }
+                else{
+                    Swal.fire('Error!',response.data.message,'error')
+                }
+            })
+            .catch(error =>{
+                console.log('error in deleting address',error);
+                Swal.fire('Error!','Something went wrong','error')
+            })
+        }
+        });
+    }
+</script>

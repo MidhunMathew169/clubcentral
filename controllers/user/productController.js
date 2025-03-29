@@ -11,6 +11,7 @@ const productDetail = async (req,res)=>{
         if(!productData){
             res.status(400).send({message:'Product not found'});
         }
+        console.log('product data:',productData);
         const findCategory = productData.category;
 
         const relatedProducts = await Product.find({

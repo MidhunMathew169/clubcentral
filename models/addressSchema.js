@@ -9,20 +9,27 @@ const addressSchema = new Schema ({
         ref : "User",
         required : true
     },
-    address : [{
-        addressType : {
+        firstName :{
             type : String,
             required : true
         },
-        name : {
+        lastName : {
+            type : String,
+            required : true
+        },
+        resAddress : {
+            type : String,
+            required : true
+        },
+        place : {
+            type : String,
+            required : true
+        },
+        street : {
             type : String,
             required : true
         },
         city : {
-            type : String,
-            required : true
-        },
-        landmark : {
             type : String,
             required : true
         },
@@ -42,7 +49,6 @@ const addressSchema = new Schema ({
             type : String,
             required : true
         }
-    }]
 })
 
 const Address = mongoose.model("Address",addressSchema);

@@ -248,7 +248,7 @@ const deleteSingleImage = async (req,res) => {
         res.send({status:true});
     } catch (error) {
         console.log('error while deleteing image');
-        res.json({success:false,message:'error while deleting image'});
+        res.json({success:false,error:'error while deleting image'});
     }
 }
 
@@ -265,13 +265,13 @@ const listProduct = async (req, res) => {
         const product = await Product.findByIdAndUpdate(productId, { isListed }, { new: true });
 
         if (!product) {
-            return res.status(404).json({ success: false, message: "Product not found" });
+            return res.status(404).json({ success: false, error: "Product not found" });
         }
 
         res.json({ success: true, message: "Product status updated", product });
     } catch (error) {
         console.error("Error updating product status:", error);
-        res.status(500).json({ success: false, message: "Internal Server Error" });
+        res.status(500).json({ success: false, error: "Internal Server Error" });
     }
 };
 

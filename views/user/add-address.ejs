@@ -1,0 +1,309 @@
+<style>
+    body {
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+    }
+
+    .wide-container {
+        max-width: 1455px !important;
+    }
+
+    .form-container {
+        background-color: white;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 30px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        width: 100%;
+    }
+
+    .form-container h2 {
+        text-align: center;
+        margin-bottom: 30px;
+        color: #333;
+    }
+
+    .form-row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    .form-group {
+        width: 48%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .form-group label {
+        margin-bottom: 8px;
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-group input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        box-sizing: border-box;
+        font-size: 16px;
+    }
+
+    .error {
+        color: red;
+        font-size: 0.8em;
+        margin-top: 5px;
+        opacity: 0;
+        transition: opacity 0.3s ease;
+        height: 20px;
+    }
+
+    .form-group input:invalid + .error {
+        opacity: 1;
+    }
+
+    .form-actions {
+        display: flex;
+        justify-content: space-between;
+        border-top: 1px solid #e0e0e0;
+        padding-top: 20px;
+    }
+
+    .form-actions button {
+        padding: 12px 24px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+        font-size: 16px;
+    }
+
+    .form-actions .cancel {
+        background-color: #f4f4f4;
+        color: #333;
+        margin-right: 15px;
+    }
+
+    .form-actions .cancel:hover {
+        background-color: orange;
+        color: white;
+    }
+
+    .form-actions .save {
+        background-color: black;
+        color: white;
+    }
+
+    .form-actions .save:hover {
+        background-color: #333;
+    }
+
+    @media (max-width: 768px) {
+        main {
+            margin-left: 0;
+            padding: 10px;
+        }
+
+        .form-row {
+            flex-direction: column;
+        }
+
+        .form-group {
+            width: 100%;
+            margin-bottom: 20px;
+        }
+
+        .form-actions {
+            flex-direction: column;
+        }
+
+        .form-actions .cancel {
+            margin-right: 0;
+            margin-bottom: 15px;
+        }
+
+        .form-actions button {
+            width: 100%;
+        }
+    }
+</style>
+
+<%- include("../partials/user/header") %>
+<div class="wide-container py-4">
+    <div class="row g-4">
+        <div class="col-md-3">
+            <%- include("../partials/user/sidebar") %>
+        </div>
+
+        <!--main content-->
+<div class="col-lg-9">
+    <div class="card shadow hover-scale">
+        <div class="card-body">
+            <h2 class="fs-2 fw-bold mb-4 text-dark">Add New Address</h2>
+            <form action="/addAddress<%= redirectParam ? '?redirect=' + redirectParam : '' %>" method="POST" id="addAddressForm">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="firstName" class="text-dark">First Name</label>
+                        <input id="firstName" type="text" name="firstName" placeholder="Enter your first name" required>
+                        <span id="firstNameError" class="error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName" class="text-dark">Last Name</label>
+                        <input id="lastName" type="text" name="lastName" placeholder="Enter your last name" required>
+                        <span id="lastNameError" class="error"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="resAddress" class="text-dark">House Name/Number</label>
+                        <input id="resAddress" type="text" name="resAddress" placeholder="Enter your house name/number" required>
+                        <span id="resAddressError" class="error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="place" class="text-dark">Place</label>
+                        <input id="place" type="text" name="place" placeholder="Enter your place" required>
+                        <span id="placeError" class="error"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="street" class="text-dark">Street</label>
+                        <input id="street" type="text" name="street" placeholder="Enter your street" required>
+                        <span id="streetError" class="error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="city" class="text-dark">City</label>
+                        <input id="city" type="text" name="city" placeholder="Enter your city" required>
+                        <span id="cityError" class="error"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="state" class="text-dark">State</label>
+                        <input id="state" type="text" name="state" placeholder="Enter your state" required>
+                        <span id="stateError" class="error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="pincode" class="text-dark">Pin-code</label>
+                        <input id="pincode" type="text" name="pincode" placeholder="Enter your pin-code" required>
+                        <span id="pincodeError" class="error"></span>
+                    </div>
+                </div>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="phone" class="text-dark">Phone Number</label>
+                        <input id="phone" type="tel" name="phone" placeholder="Enter your phone number" required>
+                        <span id="phoneError" class="error"></span>
+                    </div>
+                    <div class="form-group">
+                        <label for="altPhone" class="text-dark">Alternative Phone Number(not required)</label>
+                        <input id="altPhone" type="tel" name="altPhone" placeholder="Enter your alternative phone number">
+                        <span id="altPhoneError" class="error"></span>
+                    </div>
+                </div>
+                <div class="form-actions">
+                    <button class="cancel" type="button">Cancel</button>
+                    <button class="save" type="submit">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+</div>
+</div>
+<%- include('../partials/user/footer') %>
+
+<script>
+    // document.getElementById('addAddressForm').addEventListener('submit', function(event) {
+    //     event.preventDefault();
+
+    //     //clear previous errors
+    //     document.getElementById('resAddressError').textContent = "";
+    //     document.getElementById('placeError').textContent = "";
+    //     document.getElementById('streetError').textContent = "";
+    //     document.getElementById('cityError').textContent = "";
+    //     document.getElementById('stateError').textContent = "";
+    //     document.getElementById('pincodeError').textContent = "";
+    //     document.getElementById('phoneError').textContent = "";
+    //     document.getElementById('altPhoneError').textContent = "";
+    // });
+
+    // let isValid = true;
+
+    // const firstName = document.getElementById('firstName').value;
+    // const firstnameRegex = /^[a-zA-Z\s]+$/;
+    // if(!firstName.match(firstnameRegex)){
+    //     isValid = false;
+    //     document.getElementById('firstNameError').textContent = "Please enter a valid first name";
+    // }
+
+    // const lastName = document.getElementById('lastName').value;
+    // const lastnameRegex = /^[a-zA-Z\s]+$/;
+    // if(!lastName.match(lastnameRegex)){
+    //     isValid = false;
+    //     document.getElementById('lastNameError').textContent = "Please enter a valid last name";
+    // }
+
+    // const resAddress = document.getElementById('resAddress').value;
+    // if(resAddress === ""){
+    //     isValid = false;
+    //     document.getElementById('resAddressError').textContent = "this field is required";
+    // }
+
+    // const place = document.getElementById('place').value;
+    // if(!place){
+    //     isValid = false;
+    //     document.getElementById('placeError').textContent = "this field is required";
+    // }
+
+    // const street = document.getElementById('street').value;
+    // if(!street){
+    //     isValid = false;
+    //     document.getElementById('streetError').textContent = "this field is required";
+    // }
+
+    // const city = document.getElementById('city').value;
+    // const cityRegex = /^[a-zA-Z\s]+$/;
+    // if(!city.match(cityRegex)){
+    //     isValid = false;
+    //     document.getElementById('cityError').textContent = "Please enter a valid city name";
+    // }
+
+    // const state = document.getElementById('state').value;
+    // const stateRegex = /^[a-zA-Z\s]+$/;
+    // if(!state.match(stateRegex)){
+    //     isValid = false;
+    //     document.getElementById('stateError').textContent = "Please enter a valid state name";
+    // }
+
+    // const pincode = document.getElementById('pincode').value;
+    // const pinRegex = /^[0-9]{6}$/;
+    // if(!pincode.match(pinRegex)){
+    //     isValid = false;
+    //     document.getElementById('pincodeError').textContent = "Please enter a valid pincode";
+    // }
+
+    // const phone = document.getElementById('phone').value;
+    // const phoneRegex = /^[0-9]{10}$/;
+    // if(!phone.match(phoneRegex)){
+    //     isValid = false;
+    //     document.getElementById('phoneError').textContent = "Please enter a valid phone number";
+    // }
+
+    // const altPhone = document.getElementById('altPhone').value;
+    // const altPhoneRegex = /^[0-9]{10}$/;
+    // if(!altPhone.match(altPhoneRegex)){
+    //     isValid = false;
+    //     document.getElementById('altPhoneError').textContent = "Please enter a valid alternate phone number";
+    // }
+
+    // if(isValid){
+    //     document.getElementById('addAddressForm').submit();
+    // }
+</script>

@@ -1,16 +1,21 @@
 const mongoose = require("mongoose");
 const {Schema} = mongoose;
-const {v4:uuidv4} = require('uuid');
+//const {v4:uuidv4} = require('uuid');
 
 const orderSchema = new Schema({
+    userId : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'User',
+        required : true
+    },
     orderId : {
         type : String,
-        default : ()=>uuidv4(),
-        unique : true
+        unique : true,
+        required : true
     },
-    orderedItem : [{
+    items : [{
         product : {
-            type : Schema.Types.ObjectId,
+            type : mongoose.Schema.Types.ObjectId,
             ref : 'Product',
             required : true
         },
@@ -18,9 +23,13 @@ const orderSchema = new Schema({
             type : Number,
             required : true
         },
+        size : {
+            type : String,
+            required : true
+        },
         price : {
             type : Number,
-            default : 0
+            required : true
         }
     }],
     totalPrice : {
@@ -35,28 +44,41 @@ const orderSchema = new Schema({
         type : Number,
         required : true
     },
+    deliveryCharges : {
+        type : Number,
+        default : 0
+    },
     address : {
-        type : Schema.Types.ObjectId,
-        ref : "User",
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Address",
         required : true
     },
-    invoiceDate : {
-        type : Date
+    paymentMethod : {
+        type : String,
+        required : true
+    },
+    paymentStatus : {
+        type : String,
+        enum : ['Pending','Paid','Failed','Refunded'],
+        default : 'Pending'
     },
     status : {
         type : String,
-        required : true,
-        enum : ['Pending','Processing','Shipped','Delivered','Cancelled','Retrun Request','Returned']
+        enum : ['Pending','Processing','Shipped','Delivered','Cancelled'],
+        default : 'Pending'
     },
-    createdOn : {
+    orderDate : {
         type : Date,
         default : Date.now,
         required : true
     },
     couponApplied : {
-        type : Boolean,
-        default : false
-    }
+        type : mongoose.Schema.Types.ObjectId,
+        ref : 'Coupon'
+    },
+    razorpay_order_id: String,
+    razorpay_payment_id: String,
+    razorpay_signature: String
 })
 
 const Order = mongoose.model("Order",orderSchema);

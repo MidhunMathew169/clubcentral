@@ -20,13 +20,32 @@ const categorySchema = new mongoose.Schema({
         type : Boolean,
         default : false
     },
-    categoryOffer : {
-        type : Number,
-        default : 0
+    offer : {
+        type : {
+            type: String,
+            enum: ['percentage', 'flat'],
+            default:'percentage'
+        },
+        value : {
+            type: Number,
+            required: false
+        },
+        startDate : {
+            type : Date,
+            required : false
+        },
+        endDate : {
+            type : Date,
+            required : false
+        }
     },
     createdAt : {
         type : Date,
         default : Date.now
+    },
+    productId : {
+        type : mongoose.Schema.Types.ObjectId,
+        ref : "Product"
     }
 })
 

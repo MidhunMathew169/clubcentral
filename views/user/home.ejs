@@ -3,7 +3,7 @@
     <%-include("../partials/user/header")%>
 
     <style>
-        .hero-section {
+    .hero-section {
       position: relative;
       width: 100%;
       height: 100vh;
@@ -461,8 +461,8 @@
                                     <a href="/products/<%= product._id %>"><%= product.productName %></a>
                                 </h3>
                                 <div class="product-price">
-                                    <span class="sale-price"><%= product.salePrice %></span>
-                                        <span class="regular-price"><strike><%= product.regularPrice %></strike></span>
+                                    <span class="sale-price">₹<%= product.salePrice %></span>
+                                        <span class="regular-price">₹<strike><%= product.regularPrice %></strike></span>
                                 </div>
                                 <p class="product-description"><%= product.description %>...</p>
                             </div>
