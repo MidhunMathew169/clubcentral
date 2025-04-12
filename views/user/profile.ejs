@@ -1,17 +1,4 @@
 <style>
-    .content-wrapper {
-        display: flex;
-        width: 100%;
-    }
-
-    aside {
-        width: 25%;
-        max-width: 300px;
-        background-color: #f9f9f9;
-        padding: 20px;
-        box-sizing: border-box;
-    }
-
     main {
         flex-grow: 1;
         padding: 20px;
@@ -20,11 +7,6 @@
         justify-content: center;
         align-items: flex-start;
         width: 75%;
-    }
-
-    .row {
-        width: 100%;
-        max-width: 600px;
     }
 
     .form-container {
@@ -85,19 +67,6 @@
     }
 
     @media (max-width: 992px) {
-        .content-wrapper {
-            flex-direction: column;
-        }
-
-        aside {
-            width: 100%;
-            max-width: 100%;
-        }
-
-        main {
-            width: 100%;
-            padding: 10px;
-        }
 
         .profile-group {
             flex-direction: column;
@@ -114,15 +83,18 @@
         }
     }
 </style>
-
-<div class="content-wrapper">
-    <aside>
+<%- include("../partials/user/header") %>
+<div class="container py-4">
+    <div class="row g-4">
+    <!--sidebar-->
+    <div class="col-md-3">
         <%- include('../partials/user/sidebar') %>
-    </aside>
-    <main>
-        <div class="row">
-            <div class="form-container">
-                <h2 class="text-primary">My Profile</h2>
+    </div>
+    <!--main content-->
+    <div class="col-md-9">
+        <div class="card shadow hover-scale">
+            <div class="card-body">
+                <h2 class="fs-2 fw-bold mb-4 text-dark">My Profile</h2>
                 <div class="profile-group">
                     <label for="firstName" class="text-dark">First Name</label>
                     <div class="value" id="firstName"><%= user.firstname %></div>
@@ -144,5 +116,7 @@
                 </div>
             </div>
         </div>
-    </main>
+    </div>
+    </div>
 </div>
+<%- include("../partials/user/footer") %>

@@ -3,6 +3,8 @@ const router = express.Router();
 const userController = require("../controllers/user/userController");
 const productController = require("../controllers/user/productController");
 const forgotController = require("../controllers/user/forgotController");
+const addressController = require("../controllers/user/addressController");
+const orderController = require("../controllers/user/orderController");
 const wishlistController = require("../controllers/user/wishlistController");
 const couponController = require("../controllers/user/couponController");
 const razorpay = require("../controllers/user/razorpay");
@@ -50,12 +52,12 @@ router.get('/changePassword',userAuth,userController.loadChangePassword);
 router.post('/changePassword',userAuth,userController.changePassword);
 
 //address management
-router.get('/addresses',userAuth,userController.loadAddressPage);
-router.get('/addAddress',userAuth,userController.loadAddAddress);
-router.post('/addAddress',userAuth,userController.addAddress);
-router.get('/editAddress/:id',userAuth,userController.editAddressPage);
-router.post('/editAddress/:id',userAuth,userController.editAddress);
-router.post('/deleteAddress',userAuth,userController.deleteAddress);
+router.get('/addresses',userAuth,addressController.loadAddressPage);
+router.get('/addAddress',userAuth,addressController.loadAddAddress);
+router.post('/addAddress',userAuth,addressController.addAddress);
+router.get('/editAddress/:id',userAuth,addressController.editAddressPage);
+router.post('/editAddress/:id',userAuth,addressController.editAddress);
+router.post('/deleteAddress',userAuth,addressController.deleteAddress);
 
 //wishlist management
 router.get('/wishlist',userAuth,wishlistController.loadWishlist);
@@ -69,13 +71,17 @@ router.post('/updateCartQty',userAuth,userController.updateCartQty);
 router.post('/removeCartItem',userAuth,userController.deleteCartItem);
 
 //checkout management
-router.get('/checkout',userAuth,userController.loadCheckout);
-router.post('/placeOrder',userAuth,userController.placeOrder);
-router.post('/create-pending-order',userAuth,userController.pendingOrder);
-router.get('/orders',userAuth,userController.listOrders);
-router.post('/cancelOrder',userAuth,userController.cancelOrder);
-router.post('/returnOrder',userAuth,userController.returnOrder);
-router.get('/orderDetails/:id',userAuth,userController.orderDetails);
+router.get('/checkout',userAuth,orderController.loadCheckout);
+router.post('/placeOrder',userAuth,orderController.placeOrder);
+router.post('/create-pending-order',userAuth,orderController.pendingOrder);
+
+//order management
+router.get('/orders',userAuth,orderController.listOrders);
+router.post('/cancelOrder',userAuth,orderController.cancelOrder);
+router.post('/returnOrder',userAuth,orderController.returnOrder);
+router.post('/cancelSingleItem',userAuth,orderController.cancelSingleItem);
+router.post('/returnSingleItem',userAuth,orderController.returnSingleItem);
+router.get('/orderDetails/:id',userAuth,orderController.orderDetails);
 
 //coupon management
 router.get('/coupons',userAuth,couponController.showCoupons);
@@ -90,6 +96,7 @@ router.post('/update-order-status',userAuth,razorpay.updateOrderStatus);
 
 //wallet management
 router.get('/wallet',userAuth,wallet.loadWallet);
+router.get('/wallet/filter',userAuth,wallet.filterWallet);
 router.post('/create-transaction',userAuth,wallet.createTransaction);
 router.post('/verify-transaction',userAuth,wallet.verifyTransaction);
 

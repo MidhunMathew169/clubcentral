@@ -18,6 +18,8 @@ router.get('/pageerror',adminController.pageError);
 router.get('/login',adminController.loadLogin);
 router.post('/login',adminController.login);
 router.get('/dashboard',adminAuth,adminController.loadDashboard);
+router.get('/dashboard-data',adminAuth,adminController.loadDashboardData);
+
 router.get('/logout',adminController.logout);
 
 //user management

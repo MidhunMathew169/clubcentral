@@ -85,6 +85,12 @@ const applyCoupon = async (req,res)=>{
             return res.status(400).json({success:false,error:`${coupon.minPurchase} is the minimum purchase required for this coupon`});
         }
 
+        const previousOrder = await Order.findOne({userId: user._id, couponApplied: coupon._id});
+
+        if(previousOrder) {
+            return res.status(400).json({success:false,error: 'You have already used this coupon in a previous order'});
+        }
+
         //find if user has used this coupon
         const userUsageIndex = coupon.userUsed.findIndex(us => us.userId.toString() === user._id.toString());
         let userUsage = userUsageIndex >= 0 ? coupon.userUsed[userUsageIndex] : null;
@@ -99,6 +105,7 @@ const applyCoupon = async (req,res)=>{
 
         if(coupon.discountType === 'percentage'){
             discount = orderValue * (coupon.discount/100);
+            console.log('discount percentage:',discount);
         }
         else if(coupon.discountType === 'fixed'){
             discount = coupon.discount;
@@ -145,6 +152,7 @@ const applyCoupon = async (req,res)=>{
 
         console.log('Total Cart Amount:',cart.totalAmount);
         console.log('Total discount amount:',cart.discountAmount);
+        console.log('coupon code:',cart.couponCode);
 
         await cart.save();
 

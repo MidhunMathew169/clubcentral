@@ -22,7 +22,7 @@ const blockUser = async (req, res) => {
         const userId = req.params.id;
         await User.findByIdAndUpdate(userId, { isBlocked: true });
         console.log("User blocked successfully:", userId);
-        res.json({ success: true ,message:"User blocked successfully"});
+        return res.json({ success: true ,message:"User blocked successfully"});
 
     } catch (error) {
         console.error("error in blockUser");
@@ -35,7 +35,7 @@ const UnBlockUser = async (req,res) => {
         const userId = req.params.id;
         await User.findByIdAndUpdate(userId, { isBlocked: false });
         console.log("User Unblocked successfully:", userId);
-        res.json({ success: true ,message:"User Unblocked successfully"});
+        return res.json({ success: true ,message:"User Unblocked successfully"});
     } catch (error) {
         console.error("error in UnBlockUser");
         res.status(500).send("Internal server error");

@@ -49,7 +49,8 @@ const cartSchema = new Schema({
     },
     discountAmount : {
         type : Number,
-        set : val => parseFloat(val) || 0
+        set : val => parseFloat(val) || 0,
+        get : val => parseFloat(val) || 0
     },
     couponCode : {
         type : String,

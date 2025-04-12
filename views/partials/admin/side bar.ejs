@@ -1,12 +1,21 @@
 <style>
     #adminSidebar{
         box-shadow: 8px 0 15px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        left: 0;
+        height: 100vh;
+        overflow-y: auto;
+        z-index: 100;
+        min-height: 100vh;
     }
+
+
 </style>
-<div id="adminSidebar" class="bg-white w-64 h-screen p-4 flex sticky top-0 flex-col">
+<div id="adminSidebar" class="bg-white w-64 p-4 flex flex-col">
     <div class="flex items-center justify-between mb-6">
         <span class="text-2xl font-bold text-orange-500">
-            <img class="w-[120px] h-auto" src="/images/login_img.png" alt="Brand Logo"><div style="background-color: black;" class="flex items-center justify-between mb-6">
+            <img class="w-[120px] h-auto" src="/images/login_img.png" alt="Brand Logo"><div style="background-color: black; " class="flex items-center justify-between mb-6">
     <!--<div class="flex items-center">
         <button class="text-gray-500 mr-4">
             <i class="fas fa-bars"></i>

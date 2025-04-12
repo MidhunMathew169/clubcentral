@@ -6,24 +6,8 @@
         font-family: Arial, sans-serif;
     }
 
-    aside {
-        width: 25%;
-        max-width: 300px;
-    }
-
-    main {
-        margin-left: 25%;
-        padding: 20px;
-        box-sizing: border-box;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-    }
-
-    .row {
-        width: 100%;
-        max-width: 600px;
+    .wide-container {
+        max-width: 1455px !important;
     }
 
     .form-container {
@@ -118,17 +102,6 @@
     }
 
     @media (max-width: 768px) {
-        aside {
-            width: 100%;
-            max-width: 100%;
-            position: static;
-        }
-
-        main {
-            margin-left: 0;
-            padding: 10px;
-        }
-
         .form-row {
             flex-direction: column;
         }
@@ -154,16 +127,18 @@
 </style>
 
 <%- include('../partials/user/header') %>
-
-<aside class="col-lg-3">
-    <%- include('../partials/user/sidebar') %>
-</aside>
-<main>
-<div class="col-lg-9 col-md-8">
-    <div class="row">
-        <div class="form-container">
-            <h2 class="text-primary">Edit Profile</h2>
-            <form action="/editProfile" method="POST" id="editProfileForm">
+<div class="wide-container py-4">
+    <div class="row g-4">
+        <!--sidebar-->
+        <div class="col-md-3">
+            <%- include('../partials/user/sidebar') %>
+        </div>
+        <!--main content-->
+        <div class="col-md-9">
+            <div class="card shadow hover-scale">
+                <div class="card-body">
+                    <h2 class="fs-2 fw-bold mb-4 text-dark">Edit Profile</h2>
+                    <form action="/editProfile" method="POST" id="editProfileForm">
                 <div class="form-row">
                     <div class="form-group">
                         <label for="firstName" class="text-dark">First Name</label>
@@ -197,6 +172,8 @@
         </div>
     </div>
     </div>
-</main>
+</div>
+</div>
+
 
 <%- include('../partials/user/footer') %>

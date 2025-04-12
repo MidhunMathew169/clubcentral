@@ -102,6 +102,23 @@
             align-items: center;
         }
 
+        /* add active link styling */
+        .header__menu ul li.active a {
+            color: #065f29;
+            font-weight: bold;
+            position: relative;
+        }
+
+        .header__menu ul li.active a::after {
+            content:'';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #065f29;
+        }
+
         .search-inp {
             display: flex;
             align-items: center;
@@ -219,22 +236,23 @@
             <div class="row d-flex">
                 <div class="col-lg-2 col-md-3">
                     <div class="header__logo">
-                        <a href="./index.html" class="brand-logo">ClubCentral</a>
+                        <a href="/" class="brand-logo">ClubCentral</a>
                     </div>
                 </div>
                 <div class="col-lg-10 col-md-6 d-flex">
                     <nav class="header__menu mobile-menu">
                         <ul>
-                            <li class="active"><a href="/">Home</a></li>
-                            <li><a href="/shop">Shop</a></li>
-                            <li><a href="#">About</a></li>
-                            <li><a href="">Contacts</a></li>
+                            <li class="<%= path === '/' ? 'active' : '' %>"><a href="/">Home</a></li>
+                            <li class="<%= path === '/shop' ? 'active' : '' %>"><a href="/shop">Shop</a></li>
+                            <li class="<%= path === '/about' ? 'active' : '' %>"><a href="/about">About</a></li>
+                            <li class="<%= path === '/contact' ? 'active' : '' %>"><a href="/contact">Contacts</a></li>
                         </ul>
                         <div class="search-inp">
                             <form action="/search" method="GET" class="search-form">
                                 <input 
                                     type="search" 
-                                    name="search" 
+                                    name="search"
+                                    id="search-input" 
                                     class="search-input" 
                                     placeholder="Search for products..." 
                                     autocomplete="off"
@@ -274,10 +292,6 @@
         </div>
 
         <script>
-            //console.log(user.firstname)
-        </script>
-
-        <script>
             document.addEventListener('DOMContentLoaded', function() {
                 const loginSignupContainer = document.querySelector('.mx-auto');
                 
@@ -289,3 +303,37 @@
                 }
             });
         </script>
+
+        <!-- <script>
+            document.addEventListener('DOMContentLoaded', ()=>{
+                const searchForm = document.getElementById('search-form');
+                const searchInput = document.getElementById('search-input');
+
+                searchForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+
+                    const searchValue = searchInput.value.trim();
+                    const url = `/search?search=${encodeURIComponent(searchValue)}`;
+
+                    try {
+                        const response = await fetch(url, {
+                            headers: {
+                                'x-Requested-with' : 'XMLHttpRequest'
+                            }
+                        });
+
+                        if (!response.ok) throw new Error('Search failed');
+
+                        const html = await response.text();
+
+                        const parser = new DOMParser();
+                        const doc = parser.parseFromString(html, 'text/html');
+                        const newContent = doc.querySelector('#shop-main-content');
+                        document.getElementById('shop-main-content').innerHTML = newContent.innerHTML;
+
+                    } catch (error) {
+                        console.error('Error fetching search results:', error);
+                    }
+                })
+            })
+        </script> -->

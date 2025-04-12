@@ -159,23 +159,66 @@
 
 <script>
     async function blockUser(userId) {
-        try {
-            const response = await axios.post(`/admin/block-user/${ userId }`);
-            if(response.status === 200){
-                window.location.reload();
+        swal.fire({
+            title:'Are you sure?',
+            text:"You won't be able to revert this!",
+            icon:'warning',
+            showCancelButton:true,
+            confirmButtonColor:'#3085d6',
+            cancelButtonColor:'#d33',
+            confirmButtonText:'Block User',
+            timer:5000
+        }).then((result) =>{
+            if(result.isConfirmed){
+                console.log('remove',userId);
+                axios.post(`/admin/block-user/${userId}`)
+                .then(response =>{
+                    if(response.data.success){
+                        console.log('user blocked successfully');
+                        swal.fire({
+                            title:'Blocked!',
+                            text:response.data.message,
+                            icon:'success',
+                            showConfirmButton:false,
+                            timer:1500
+                        })
+                        .then(()=> window.location.reload())
+                    }
+                    else{
+                        swal.fire('Error',response.data.message,'error');
+                    }
+                })
+                .catch(error =>{
+                    console.log('error in deleting address',error);
+                    swal.fire('Error','Something went wrong','error');
+                })
             }
-        } catch (error) {
-            console.log('Error blocking user:',error);
-        }
+        } )
+        // try {
+        //     const response = await axios.post(`/admin/block-user/${ userId }`);
+        //     if(response.status === 200){
+        //         window.location.reload();
+        //     }
+        // } catch (error) {
+        //     console.log('Error blocking user:',error);
+        // }
     }
     async function unBlockUser(userId) {
         try {
             const response = await axios.post(`/admin/unblock-user/${userId}`);
-            if(response.status === 200){
-                window.location.reload();
+            if(response.data.success){
+                swal.fire({
+                    icon:'success',
+                    title:'Unblocked!',
+                    text:response.data.message,
+                    showConfirmButton:false,
+                    timer:1500
+                })
+                .then(()=> window.location.reload())
             }
         } catch (error) {
             console.log('Error unblocking user:',error);
+            swal.fire('Error',response.data.error,'error');
         }
     }
 </script>

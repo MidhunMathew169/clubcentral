@@ -148,7 +148,14 @@
         <div class="col-md-9">
             <div class="card shadow hover-scale">
                 <div class="card-body">
-                    <h2 class="fs-2 fw-bold mb-4 text-dark">My Wallet</h2>
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h2 class="fs-2 fw-bold mb-4 text-dark">My Wallet</h2>
+                        <div class="btn-group" role="group" id="walletFilter">
+                            <button type="button" class="btn btn-outline-secondary active" data-filter="all">All</button>
+                            <button type="button" class="btn btn-outline-secondary" data-filter="credit">Credit</button>
+                            <button type="button" class="btn btn-outline-secondary" data-filter="debit">Debit</button>
+                        </div>
+                    </div>
                     
                     <!-- Wallet Balance Card -->
                     <div class="gradient-red wallet-balance rounded-xl shadow">
@@ -168,22 +175,22 @@
                                     <th class="py-3">Debit / Credit</th>
                                 </tr>
                             </thead>
-                            <tbody>
-                                <% if(wallet && wallet.transaction && wallet.transaction.length > 0) { %>
-                                <% wallet.transaction.forEach(transaction=>{ %>
-                                <tr class="table-row-hover">
-                                    <td class="py-3">#<%= transaction.transactionId %></td>
-                                    <td class="py-3"><%= transaction.date ? new Date(transaction.date).toLocaleDateString('en-GB',{ day: '2-digit', month: '2-digit', year: 'numeric'}) : 'N/A'%></td>
-                                    <td class="py-3"><%= transaction.amount.toFixed(2) %></td>
-                                    <td class="py-3"><%= transaction.description || 'N/A' %></td>
-                                    <td class="py-3 <%= transaction.type === 'credit' ? 'text-success' : 'text-danger'%>"><%= transaction.type === 'credit' ? 'Credit' : 'Debit' %></td>
-                                </tr>
-                                <% }) %>
+                            <tbody id="walletTransactionsBody">
+                                <% if(transactions && transactions.length > 0) { %>
+                                    <% transactions.forEach(transaction => { %>
+                                        <tr class="table-row-hover">
+                                            <td class="py-3">#<%= transaction.transactionId %></td>
+                                            <td class="py-3"><%= transaction.date ? new Date(transaction.date).toLocaleDateString('en-GB',{ day: '2-digit', month: '2-digit', year: 'numeric'}) : 'N/A'%></td>
+                                            <td class="py-3"><%= transaction.amount.toFixed(2) %></td>
+                                            <td class="py-3"><%= transaction.description || 'N/A' %></td>
+                                            <td class="py-3 <%= transaction.type === 'credit' ? 'text-success' : 'text-danger'%>"><%= transaction.type === 'credit' ? 'Credit' : 'Debit' %></td>
+                                        </tr>
+                                    <% }) %>
                                 <% } else { %>
                                     <tr>
                                         <td colspan="5" class="text-center py-3">No transactions found</td>
                                     </tr>
-                                    <% } %>
+                                <% } %>
                             </tbody>
                         </table>
                     </div>
@@ -199,6 +206,54 @@
 <%- include("../partials/user/footer") %>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded',()=>{
+        const buttons = document.querySelectorAll('#walletFilter button');
+        const tbody = document.querySelector('#walletTransactionsBody');
+
+        buttons.forEach(button => {
+            button.addEventListener('click' , async () => {
+                // remove 'active' class from all buttons
+                buttons.forEach(btn => btn.classList.remove('active'));
+                // add 'active' to the clicked button
+                button.classList.add('active');
+
+                const filter = button.getAttribute('data-filter');
+
+                try {
+                    const res = await fetch(`/wallet/filter?filter=${filter}`);
+                    const data = await res.json();
+
+                    tbody.innerHTML = '';
+
+                    if(data.transactions.length === 0){
+                        tbody.innerHTML = `
+                        <tr>
+                            <td colspan="5" class="text-center py-3">No transactions found</td>
+                        </tr>
+                        `;
+                        return;
+                    }
+
+                    data.transactions.forEach(transaction => {
+    tbody.innerHTML += `
+    <tr class="table-row-hover">
+        <td class="py-3">#${transaction.transactionId}</td>
+        <td class="py-3">${transaction.date ? new Date(transaction.date).toLocaleDateString('en-GB', { day: '2-digit', month: '2-digit', year: 'numeric'}) : 'N/A'}</td>
+        <td class="py-3">${transaction.amount.toFixed(2)}</td>
+        <td class="py-3">${transaction.description || 'N/A'}</td>
+        <td class="py-3 ${transaction.type === 'credit' ? 'text-success' : 'text-danger'}">${transaction.type === 'credit' ? 'Credit' : 'Debit'}</td>
+    </tr>
+    `;
+});
+                } catch (error) {
+                    
+                }
+            })
+        })
+    })
+</script>
 
 <script>
     document.getElementById("addMoneyBtn").addEventListener("click",function(){

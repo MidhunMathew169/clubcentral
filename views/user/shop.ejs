@@ -3,6 +3,10 @@
 <%-include("../partials/user/header")%>
 </header>
 <style>
+    .wide-container {
+        max-width: 1455px !important;
+    }
+
     .widget-category {
             background: #fff;
             padding: 20px;
@@ -262,6 +266,13 @@
         }
 
         /* Sort Dropdown Styling */
+
+        .sort-by-product-area {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 6px;
+        }
         .sort-by-cover {
             position: relative;
             background: #fff;
@@ -327,6 +338,10 @@
             align-items: center;
             gap: 8px;
         }
+
+        hr {
+            margin-bottom: 8px;
+        }
         /*pagination*/
         .pagination {
             display: flex;
@@ -356,9 +371,10 @@
 
 </style>
 <body>
-<div class="row">
+<div class="wide-container py-4">
+<div class="row g-4">
 <!--sidebar section-->
-<aside class="col-lg-3 col-md-4 primary-sidebar sticky-sidebar mb-4 ">
+<div class="col-md-3">
     <!-- Category Widget -->
     <div class="widget-category">
         <h5 class="section-title style-1">Browse Categories</h5>
@@ -374,12 +390,10 @@
              <% }) %>       
         </ul>
     </div>
-</aside>
+</div>
 
-<main class="col-lg-9 col-md-8">
-
-    <div class="col-lg-12">
-        
+<!--main content-->
+<div id="shop-main-content" class="col-lg-9">
         <div class="shop-product-fillter style-2">
             <div class="totall-product">
                 <p>We found <strong class="text-brand"><%= productData.length %></strong> items on this page</p>
@@ -403,10 +417,11 @@
                                   <li><a class="<%= sortOption === 'highToLow' ? 'active' : '' %>" href="/shop?sort=highToLow&search=<%= searchQuery %>&category=<%= categoryFilter %>&page=<%= currentPage %>" >Price: High to Low</a></li>
                                   <li><a class="<%= sortOption === 'zToA' ? 'active' : '' %>" href="/shop?sort=zToA&search=<%= searchQuery %>&category=<%= categoryFilter %>&page=<%= currentPage %>" >Z to A</a></li>
                                 </ul>
-                              </div>
-                     
-                    
+                            </div>
                 </div>
+                <% if (searchQuery || categoryFilter || sortOption !== 'featured') { %>
+                <a href="/shop" class="btn btn-outline-secondary btn-sm">Reset Filters</a>
+                <% } %>
             </div>
         </div>
   
@@ -452,8 +467,7 @@
             <% }) %>
         </div>
     </div>
-</main>
-</div>
+
 <!--pagination-->
 <div class="pagination">
     <% if (currentPage > 1) { %>
@@ -469,6 +483,8 @@
     <% if (currentPage < totalPages) { %>
         <a href="?sort=<%= sortOption %>&page=<%= currentPage + 1 %>&category=<%= categoryFilter %><% if(searchQuery){ %>&search=<%= searchQuery %><% } %>" class="next">Next</a>
     <% } %>
+</div>
+</div>
 </div>
 </body>
 <!--footer section-->

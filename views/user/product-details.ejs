@@ -472,7 +472,7 @@
                             <ins><span class="text-brand">₹<%= productData.salePrice %></span></ins>
                                 <ins><span class="old-price font-md ms-2">₹<%= productData.regularPrice %></span></ins>
                                 <span class="hot" color: white; padding: 3px 5px; font-size: 12px;>
-                                    <span class="save-price font-md color3 ms-2"> 20% OFF</span>
+                                    <span class="save-price font-md color3 ms-2"><%= productData.offer.value %>% Off</span>
                                 </span>
                         </div>
                     </div>
@@ -806,7 +806,7 @@
             
                 </div>
             </div>
-            <di v class="col-12">
+            <div class="col-12">
                 <h3 class="section-title style-1 mb-30">Related products</h3>
             </div>
             <div class="row Related-products">
@@ -892,10 +892,11 @@
                 background: '#ffcccc'
             })
         }
+
         axios.post('/addToCart', {productId,size: selectedSize,quantity:1})
         .then(response =>{
             if(response.data.success){
-                Swal.fire('success',response.data.message,'success');
+                Swal.fire('success',response.data.message,'success'); 
             }
             else{
                 swal.fire('Error',response.data.message,'error')

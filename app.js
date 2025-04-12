@@ -27,6 +27,12 @@ app.use(express.urlencoded({extended:true}));
 app.use(passport.initialize());
 app.use(passport.session());
 
+//add middleware to track current path for active navigation
+app.use((req,res,next) => {
+    res.locals.path = req.path;
+    next();
+})
+
 app.set("view engine","ejs");
 app.use(expressLayouts)
 app.set("views",path.join(__dirname,'views'));

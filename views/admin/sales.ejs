@@ -60,10 +60,12 @@
                     <div class="col-md-3 custom-date-range <%= filter === 'custom' ? 'show' : 'd-none' %>">
                         <label class="form-label fw-bold">Start Date</label>
                         <input type="date" class="form-control" id="startDate" name="startDate" value="<%= startDate %>">
+                        <div id="startDateError" class="text-danger mt-1 small"></div>
                     </div>
                     <div class="col-md-3 custom-date-range <%= filter === 'custom' ? 'show' : 'd-none' %>">
                         <label class="form-label fw-bold">End Date</label>
                         <input type="date" class="form-control" id="endDate" name="endDate" value="<%= endDate %>">
+                        <div id="endDateError" class="text-danger mt-1 small"></div>
                     </div>
                     <div class="col-md-3">
                         <button type="submit" class="btn btn-primary w-100">Apply Filter</button>
@@ -144,10 +146,10 @@
                             <td class="fw-bold"><%= order.orderId %></td>
                             <td><%= new Date(order.orderDate).toLocaleDateString() %></td>
                             <td><%= order.userId.firstname %> <%= order.userId.lastname %></td>
-                            <td><%= order.items.product %></td>
-                            <td class="text-muted">₹<%= order.totalPrice %></td>
-                            <td class="text-danger">₹<%= order.discount %></td>
-                            <td class="fw-bold">₹<%= order.finalAmount %></td>
+                            <td><%= order.items.length %></td>
+                            <td class="text-muted">₹<%= order.totalPrice.toFixed(2) %></td>
+                            <td class="text-danger">₹<%= order.discountAmount.toFixed(2) %></td>
+                            <td class="fw-bold">₹<%= order.finalAmount.toFixed(2) %></td>
                         </tr>
                         <% }); %>
                         <% } else { %>
@@ -189,7 +191,7 @@
                 .custom-date-range.show {
                     display: block !important;
                 }
-            </style>
+            </style>   
 
             <!-- Add JavaScript for toggling custom date range -->
             <script>
@@ -226,6 +228,89 @@
         </div>
     </div>
 </div>
+
+<script>
+    document.querySelector('form').addEventListener('submit', function (e) {
+        e.preventDefault();
+    
+        const formData = new FormData(this);
+        const params = new URLSearchParams();
+    
+        // Clear previous error messages
+        document.getElementById('startDateError').textContent = '';
+        document.getElementById('endDateError').textContent = '';
+    
+        const filterValue = formData.get('filter');
+        let hasError = false;
+    
+        if (filterValue === 'custom') {
+            const startDateInput = formData.get('startDate');
+            const endDateInput = formData.get('endDate');
+            const today = new Date().toISOString().split('T')[0];
+    
+            if (!startDateInput) {
+                document.getElementById('startDateError').textContent = 'Start date is required.';
+                hasError = true;
+            }
+    
+            if (!endDateInput) {
+                document.getElementById('endDateError').textContent = 'End date is required.';
+                hasError = true;
+            }
+    
+            if (!hasError && startDateInput === endDateInput) {
+                document.getElementById('endDateError').textContent = 'Start and end date cannot be the same.';
+                hasError = true;
+            }
+    
+            if (!hasError && (startDateInput > today || endDateInput > today)) {
+                if (startDateInput > today) {
+                    document.getElementById('startDateError').textContent = 'Start date cannot be in the future.';
+                }
+                if (endDateInput > today) {
+                    document.getElementById('endDateError').textContent = 'End date cannot be in the future.';
+                }
+                hasError = true;
+            }
+    
+            if (!hasError && startDateInput > endDateInput) {
+                document.getElementById('startDateError').textContent = 'Start date must be earlier than end date.';
+                hasError = true;
+            }
+        }
+    
+        // If validation failed, stop redirect
+        if (hasError) {
+            return;
+        }
+    
+        // Append all valid form data to URL params
+        for (const [key, value] of formData.entries()) {
+            if (value) {
+                params.append(key, value);
+            }
+        }
+    
+        // preserve the current page
+        const currentPage = new URLSearchParams(window.location.search).get('page');
+        if (currentPage) {
+            params.append('page', currentPage);
+        }
+    
+        // Delay and redirect only if validation is passed
+        setTimeout(() => {
+            window.location.href = this.action + '?' + params.toString();
+        }, 300);
+    });
+    
+    // Animation part unchanged
+    document.addEventListener('DOMContentLoaded', function () {
+        const cards = document.querySelectorAll('.summary-card');
+        cards.forEach((card, index) => {
+            card.style.animationDelay = `${index * 0.1}s`;
+        });
+    });
+    </script> 
 
 <script>
 function downloadPDF(){
@@ -322,33 +407,33 @@ function downloadExcel(){
     });
 }
 
-document.querySelector('form').addEventListener('submit',function(e){
-    e.preventDefault();
-    const formData = new FormData(this);
-    const params = new URLSearchParams();
+// document.querySelector('form').addEventListener('submit',function(e){
+//     e.preventDefault();
+//     const formData = new FormData(this);
+//     const params = new URLSearchParams();
 
-    // Add form data to params
-    for (const [key, value] of formData.entries()){
-        if (value) {
-            params.append(key, value);
-        }
-    }
+//     // Add form data to params
+//     for (const [key, value] of formData.entries()){
+//         if (value) {
+//             params.append(key, value);
+//         }
+//     }
 
-    // preserve the current page
-    const currentPage = new URLSearchParams(window.location.search).get('page');
-    if(currentPage) {
-        params.append('page', currentPage);
-    }
+//     // preserve the current page
+//     const currentPage = new URLSearchParams(window.location.search).get('page');
+//     if(currentPage) {
+//         params.append('page', currentPage);
+//     }
 
-    setTimeout(()=>{
-        window.location.href = this.action + '?' + params.toString();
-    },300);
-});
+//     setTimeout(()=>{
+//         window.location.href = this.action + '?' + params.toString();
+//     },300);
+// });
 
-document.addEventListener('DOMContentLoaded',function(){
-    const cards = document.querySelectorAll('.summary-card');
-    cards.forEach((card,index) => {
-        card.style.animationDelay = `${index * 0.1}s`;
-    });
-});
+// document.addEventListener('DOMContentLoaded',function(){
+//     const cards = document.querySelectorAll('.summary-card');
+//     cards.forEach((card,index) => {
+//         card.style.animationDelay = `${index * 0.1}s`;
+//     });
+// });
 </script>

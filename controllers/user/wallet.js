@@ -14,6 +14,7 @@ const loadWallet = async (req,res)=>{
     try {
         console.log('wallet page triggered');
         const user = req.session.user;
+        const filter = req.query.filter || 'all';
 
         const userData = await User.findOne({_id:user});
         console.log('userData from loadWallet:',userData);
@@ -33,15 +34,70 @@ const loadWallet = async (req,res)=>{
             })
             await wallet.save();
         }
+
+        wallet.transaction.sort((a,b) => new Date(b.date) - new Date(a.date));
         console.log('wallet balance:',wallet.balance);
 
-        res.render('user/wallet',{wallet,user:userData});
+        let filteredTransactions;
+
+        if(filter === 'credit'){
+            filteredTransactions = wallet.transaction.filter(txn => txn.type === 'credit');
+        }
+        else if(filter === 'debit'){
+            filteredTransactions = wallet.transaction.filter(txn => txn.type === 'debit');
+        }
+        else{
+            filteredTransactions = wallet.transaction;
+        }
+
+        res.render('user/wallet',{
+            wallet,
+            user:userData,
+            transactions:filteredTransactions,
+        });
     } catch (error) {
         console.log('Error in loadWallet:',error);
         return res.status(500).send('Error loading wallet');
     }
 }
 
+const filterWallet = async (req,res)=>{
+    try {
+        const user = req.session.user;
+        const filter = req.query.filter || 'all';
+
+        let wallet = await Wallet.findOne({userId:user._id});
+        if(!wallet){
+            wallet = new Wallet({
+                userId: user._id,
+                balance: 0,
+                transaction: []
+            })
+            await wallet.save();
+        }
+        wallet.transaction.sort((a,b) => new Date(b.date) - new Date(a.date));
+
+        let filteredTransactions;
+
+        if(filter === 'credit'){
+            filteredTransactions = wallet.transaction.filter(txn => txn.type === 'credit');
+        }
+        else if(filter === 'debit'){
+            filteredTransactions = wallet.transaction.filter(txn => txn.type === 'debit');
+        }
+        else{
+            filteredTransactions = wallet.transaction;
+        }
+
+        res.json({
+            success:true,
+            transactions:filteredTransactions
+        });
+    } catch (error) {
+        console.log('Error in filterWallet:',error);
+        return res.status(500).json({ error:'Error filtering wallet' });
+    }
+}
 const createTransaction = async (req,res)=>{
         console.log('createTransaction called');
         const {amount} = req.body;
@@ -124,6 +180,7 @@ const verifyTransaction = async (req,res)=>{
 
 module.exports = {
     loadWallet,
+    filterWallet,
     createTransaction,
     verifyTransaction
 }

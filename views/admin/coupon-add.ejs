@@ -21,6 +21,9 @@
         content: '▼';
         position: absolute;
     }
+    .error-message{
+        color: red;
+    }
 </style>
 <div class="flex-h-screen">
     <%- include('../partials/admin/side bar') %>
@@ -125,6 +128,8 @@
         const maxDiscount = document.getElementsByName('maxDiscount')[0].value || '';
         const discountType = document.getElementsByName('discountType')[0].value || '';
         const description = document.getElementsByName('description')[0].value || '';
+
+        // const today = new Date().toISOString().split('T')[0];
 
         try {
             const response = await axios.post("/admin/addCoupon",{

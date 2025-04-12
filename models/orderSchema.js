@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { type } = require("os");
 const {Schema} = mongoose;
 //const {v4:uuidv4} = require('uuid');
 
@@ -30,13 +31,39 @@ const orderSchema = new Schema({
         price : {
             type : Number,
             required : true
+        },
+        status : {
+            type : String,
+            enum : ['Pending','Delivered','Cancelled','Returned'],
+            default : 'Pending'
+        },
+        discountPerItem : {
+            type : Number,
+            default : 0
+        },
+        refundAmount : {
+            type : Number,
+            default : 0
+        },
+        refundStatus : {
+            type : String,
+            enum : ['Not Applicable', 'Pending', 'Processed', 'Failed'],
+            default : 'Not Applicable'
+        },
+        cancelledAt : {
+            type : Date,
+            default : null
+        },
+        returnedAt : {
+            type : Date,
+            default : null
         }
     }],
     totalPrice : {
         type : Number,
         required : true
     },
-    discount : {
+    discountAmount : {
         type : Number,
         default : 0
     },
@@ -64,7 +91,7 @@ const orderSchema = new Schema({
     },
     status : {
         type : String,
-        enum : ['Pending','Processing','Shipped','Delivered','Cancelled'],
+        enum : ['Pending','Processing','Shipped','Delivered','Cancelled','Returned'],
         default : 'Pending'
     },
     orderDate : {

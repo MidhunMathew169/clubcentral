@@ -6,24 +6,8 @@
         font-family: Arial, sans-serif;
     }
 
-    aside {
-        width: 25%;
-        max-width: 300px;
-    }
-
-    main {
-        margin-left: 25%;
-        padding: 20px;
-        box-sizing: border-box;
-        display: flex;
-        justify-content: center;
-        align-items: flex-start;
-        min-height: 100vh;
-    }
-
-    .row {
-        width: 100%;
-        max-width: 800px;
+    .wide-container {
+        max-width: 1455px !important;
     }
 
     .form-container {
@@ -95,34 +79,24 @@
         color: #333;
     }
 
-    .card-body {
+    .card-content {
         padding: 20px;
     }
 
-    .card-body .name {
+    .card-content .name {
         font-size: 18px;
         font-weight: bold;
         margin-bottom: 10px;
         color: #333;
     }
 
-    .card-body > div:not(.name) {
+    .card-content > div:not(.name) {
         color: #666;
         margin-bottom: 5px;
         font-size: 16px;
     }
 
     @media (max-width: 768px) {
-        aside {
-            width: 100%;
-            max-width: 100%;
-            position: static;
-        }
-
-        main {
-            margin-left: 0;
-            padding: 10px;
-        }
 
         .page-header {
             flex-direction: column;
@@ -135,16 +109,20 @@
         }
     }
 </style>
-
+<!--header-->
 <%- include("../partials/user/header") %>
-<aside>
-    <%- include("../partials/user/sidebar") %>
-</aside>
-<main class="col-lg-9 col-md-8">
-    <div class="row">
-        <div class="form-container">
+<div class="wide-container py-4">
+    <div class="row g-4">
+        <!--sidebar-->
+        <div class="col-md-3">
+            <%- include("../partials/user/sidebar") %>
+        </div>
+<!--main content-->
+<div class="col-lg-9">
+    <div class="card shadow hover-scale">
+        <div class="card-body">
             <div class="page-header">
-                <h2 class="text-primary">My Address</h2>
+                <h2 class="fs-2 fw-bold mb-4 text-dark">My Address</h2>
                 <a href="/addAddress" class="add-address-btn">+ Add Address</a>
             </div>
             <% if(addresses.length > 0){ %>
@@ -157,7 +135,7 @@
                         <a href="javascript:void(0)" onclick="deleteAddress('<%= address._id %>')"><i class="fas fa-trash"></i></a>
                     </div>
                 </div>
-                <div class="card-body">
+                <div class="card-content">
                     <div class="name"><%= address.firstName %> <%= address.lastName %></div>
                     <div><%= address.resAddress %>, <%= address.street %>, <%= address.place %></div>
                     <div><%= address.city %>, <%= address.state %>, <%= address.pincode %></div>
@@ -172,7 +150,9 @@
             <% } %>
         </div>
     </div>
-</main>
+</div>
+</div>
+</div>
 <%- include("../partials/user/footer") %>
 
 <script>

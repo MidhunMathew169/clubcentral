@@ -117,6 +117,12 @@
                         <h5><%= item.product.productName %></h5>
                         <p>Size: <%= item.size %> | Quantity: <%= item.quantity %></p>
                         <p class="text-success">₹<%= item.price %></p>
+                        <% if(item.status === 'Cancelled' || item.status === 'Returned') { %>
+                            <p class="text-danger">status: <%= item.status %></p>
+                            <% if(item.refundAmount > 0) { %>
+                                <p class="text-success">Refund Amount: ₹<%= item.refundAmount %></p>
+                            <% } %>
+                        <% } %>
                     </div>
                 </div>
                 <% }) %>

@@ -38,15 +38,15 @@ const getCouponAddPage = async (req,res) => {
 }
 
 const addCoupon = async (req,res)=>{
-        const formatDate = (dateStr) => {
-            const [day, month, year] = dateStr.split('-');
-            return new Date(`${year}-${month}-${day}`);
-        }
+        // const formatDate = (dateStr) => {
+        //     const [day, month, year] = dateStr.split('-');
+        //     return new Date(`${year}-${month}-${day}`);
+        // }
         let {couponName,code,minPurchase,limit,userLimit,startedOn,expireOn,discount,maxDiscount,discountType,description} = req.body;
         console.log('req.body:',req.body);
 
-        startedOn = formatDate(startedOn);
-        expireOn = formatDate(expireOn);
+        startedOn = new Date(startedOn);
+        expireOn = new Date(expireOn);
 
         const codeTester = code.trim();
         console.log('add coupon triggered');
