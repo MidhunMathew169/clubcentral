@@ -296,16 +296,16 @@
                                         <p>Qty: <%= item.quantity %></p>
                                     </div>
                                     <div class="buttons">
-                                        <% if(item.status !== 'Delivered' && item.status !== 'Cancelled'){ %>
+                                        <% if(order.status !== 'Delivered' && item.status !== 'Cancelled' && order.status !== 'Cancelled' && order.status !== 'Returned'){ %>
                                             <button onclick="cancelItem('<%= order._id %>','<%= item._id %>')">cancel</button>
                                         <% } %>
-                                        <% if(item.status === 'Delivered') { %>
+                                        <% if(order.status === 'Delivered' && order.status !== 'Cancelled' && order.status !=='Returned') { %>
                                             <button onclick="returnItem('<%= order._id %>', '<%= item._id %>')">return</button>
                                         <% } %>
                                     </div>
-                                    <% if(item.status === 'Cancelled') { %>
+                                    <% if(item.status === 'Cancelled' || order.status === 'Cancelled') { %>
                                         <div class="text-danger">Cancelled</div>
-                                    <% } else if(item.status === 'Returned') { %>
+                                    <% } else if(item.status === 'Returned' || order.status === 'Returned') { %>
                                         <div class="text-danger">Returned</div>
                                     <% } %>
                                     </div>

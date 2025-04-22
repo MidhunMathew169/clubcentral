@@ -7,6 +7,21 @@
         max-width: 1455px !important;
     }
 
+    /* breadcrump styling */
+    .breadcrumb-wrap {
+        background-color: #f1f1f1;
+        padding: 12px 0;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+    }
+    .breadcrumb a {
+        color: #006A67;
+        text-decoration: none;
+        transition: color 0.3s;
+    }
+    .breadcrumb a:hover {
+        color: #004a47;
+    }
+
     .widget-category {
             background: #fff;
             padding: 20px;
@@ -371,8 +386,18 @@
 
 </style>
 <body>
-<div class="wide-container py-4">
+<div class="wide-container">
 <div class="row g-4">
+    <!-- Breadcrumb -->
+    <div class="page-header breadcrumb-wrap bg-light">
+        <div class="container">
+            <div class="breadcrumb d-flex align-items-center">
+                <a href="/" class="text-dark text-decoration-none" rel="nofollow">Home</a>
+                <span class="mx-2"><i class="fas fa-chevron-right fa-xs"></i></span>
+                <span class="text-muted">shop</span>
+            </div>
+        </div>
+    </div>
 <!--sidebar section-->
 <div class="col-md-3">
     <!-- Category Widget -->

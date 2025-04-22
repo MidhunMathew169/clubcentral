@@ -368,7 +368,7 @@ const cancelOrder = async(req,res)=>{
     }
         const updateOrder = await Order.findOneAndUpdate(
             {_id:orderId},
-            {$set:{status:'Cancelled',paymentStatus:'Refunded'}},
+            {$set:{'items.$[].status':'Cancelled',status:'Cancelled',paymentStatus:'Refunded'}},
             {new:true}
         );
         if(!updateOrder){
@@ -414,7 +414,7 @@ const returnOrder = async (req,res) => {
 
         const updateOrder = await Order.findOneAndUpdate(
             {_id:orderId},
-            {$set:{status:'Cancelled',paymentStatus:'Refunded'}},
+            {$set:{'items.$[].status':'Returned',status:'Returned',paymentStatus:'Refunded'}},
             {new:true}
         );
         if(!updateOrder){

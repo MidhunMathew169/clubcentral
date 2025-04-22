@@ -157,6 +157,7 @@
                 const quantityInput = document.querySelector(
                     `input[data-product-id="${productId}"][data-size="${size}"]`
                 );
+                console.log('quantity input:',quantityInput);
                
                 if(quantityInput){
                     const purchaseLimit = response.data.purchaseLimit;
@@ -164,7 +165,7 @@
                     console.log('action:',action);
                     console.log('quantity:',response.data.quantity);
                     console.log(action === 'increase' && response.data.quantity >= purchaseLimit);
-                    if(action === 'increase' && response.data.quantity >= purchaseLimit){
+                    if(action === 'increase' && purchaseLimit === 5 && response.data.quantity >= purchaseLimit){
                         console.log('purchase limit exceeded');
                         swal.fire({
                             toast: true,
@@ -175,6 +176,18 @@
                             timer: 1500
                         });
                         return;
+                    }
+                    else if(action === 'increase' && purchaseLimit < 5 && response.data.quantity >= purchaseLimit){
+                      console.log('product out of stock');
+                      swal.fire({
+                        toast: true,
+                        position: 'top-end',
+                        icon: 'warning',
+                        title: `Only ${purchaseLimit} items available`,
+                        showConfirmButton: false,
+                        timer: 1500
+                      });
+                      return;
                     }
                     quantityInput.value = response.data.quantity;
 
