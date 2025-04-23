@@ -22,6 +22,7 @@ router.post('/verify-otp',userController.verifyOtp);
 router.post('/resend-otp',userController.resendOtp);
 router.get('/auth/google',passport.authenticate('google',{scope:['profile','email'],prompt:'select_account'}));
 router.get('/auth/google/callback',passport.authenticate('google',{failureRedirect:'/signup'}),(req,res)=>{
+    req.session.user = req.user._id;
     res.redirect('/');
 });
 //login management

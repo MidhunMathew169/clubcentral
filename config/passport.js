@@ -22,7 +22,6 @@ async (accessToken, refreshToken, profile, done) => {
                 email: profile.emails[0].value
             });
             await user.save();
-            req.session.user = user._id;
             return done(null, user);
         }
     }
