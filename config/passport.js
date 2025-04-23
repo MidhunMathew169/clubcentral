@@ -22,11 +22,12 @@ async (accessToken, refreshToken, profile, done) => {
                 email: profile.emails[0].value
             });
             await user.save();
+            req.session.user = user._id;
             return done(null, user);
         }
-    } 
+    }
     catch (error) {
-        return done(err, null);
+        return done(error, null);
     }
 }
 ));
